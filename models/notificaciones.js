@@ -1,8 +1,6 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize('sqlite::memory:');
-
-const Notificacion = sequelize.define(
-  'Notificacion',
+const notificacionesModelo = (sequelize, DataTypes) => {
+const notificacion = sequelize.define(
+  'notificaciones',
   {
     // Model attributes are defined here
     id_notificacion: {
@@ -34,5 +32,6 @@ const Notificacion = sequelize.define(
     timestamps: false
   },
 );
-
-module.exports = Notificacion;
+   return notificacion
+}
+export default notificacionesModelo

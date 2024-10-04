@@ -1,8 +1,6 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize('sqlite::memory:');
-
-const Horario = sequelize.define(
-  'Horario',
+const horariosModelo = (sequelize, DataTypes) => {
+const horario = sequelize.define(
+  'horarios',
   {
     // Model attributes are defined here
     id_horario: {
@@ -41,6 +39,7 @@ const Horario = sequelize.define(
     tableName: 'horarios',
     timestamps: false
   },
-);
-
-module.exports = Horario;
+)
+  return horario
+};
+export default horariosModelo

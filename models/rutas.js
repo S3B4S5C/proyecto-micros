@@ -1,8 +1,6 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize('sqlite::memory:');
-
-const Ruta = sequelize.define(
-  'Ruta',
+const rutasModelo = (sequelize, DataTypes) => {
+const ruta = sequelize.define(
+  'rutas',
   {
     // Model attributes are defined here
     id_ruta: {
@@ -33,5 +31,6 @@ const Ruta = sequelize.define(
     timestamps: false
   },
 );
-
-module.exports = Ruta;
+  return ruta
+}
+export default rutasModelo

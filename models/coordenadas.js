@@ -1,8 +1,6 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize('sqlite::memory:');
-
-const Coordenada = sequelize.define(
-  'Coordenada',
+const coordenadasModelo = (sequelize, DataTypes) => {
+const coordenada = sequelize.define(
+  'coordenadas',
   {
     // Model attributes are defined here
     id_coordenada: {
@@ -24,6 +22,7 @@ const Coordenada = sequelize.define(
     tableName: 'coordenadas',
     timestamps: false
   },
-);
-
-module.exports = Coordenada;
+)
+  return coordenada
+};
+export default coordenadasModelo

@@ -1,8 +1,6 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize('sqlite::memory:');
-
-const Sindicato= sequelize.define(
-  'Sindicato',
+const sindicatosModelo = () => {
+const sindicato= sequelize.define(
+  'sindicatos',
   {
     // Model attributes are defined here
     id_sindicato: {
@@ -21,5 +19,6 @@ const Sindicato= sequelize.define(
     timestamps: false
   },
 );
-
-module.exports = Sindicato;
+return sindicato
+}
+export default sindicatosModelo

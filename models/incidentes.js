@@ -1,8 +1,6 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize('sqlite::memory:');
-
-const Incidente = sequelize.define(
-  'Incidente',
+const incidentesModelo = (sequelize, DataTypes) => {
+const incidente = sequelize.define(
+  'incidentes',
   {
     // Model attributes are defined here
     id_incidente: {
@@ -41,6 +39,8 @@ const Incidente = sequelize.define(
     timestamps: false
   },
 );
+  return incidente
+};
 Incidente.associate = function(models) {
     Incidente.belongsTo(models.Turno, {
         foreignKey: ['usuario_chofer', 'id_micro'],
@@ -48,4 +48,4 @@ Incidente.associate = function(models) {
         as: 'turno',
     })
 };
-module.exports = Incidente;
+export default incidentesModelo
