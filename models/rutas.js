@@ -11,11 +11,11 @@ const ruta = sequelize.define(
     },
     longitud_total: {
       type: DataTypes.DOUBLE,
-      allowNull: false,
+      allowNull: true,
     },
     duracion_estimada: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: true
     },
     id_linea: {
         type: DataTypes.BIGINT,

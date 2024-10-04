@@ -1,3 +1,5 @@
+import { defaultValueSchemable } from "sequelize/lib/utils";
+
 const paradasProvisionalesModelo = (sequelize, DataTypes) => {
 const paradaProvisional = sequelize.define(
   'paradas_provisionales',
@@ -5,12 +7,9 @@ const paradaProvisional = sequelize.define(
     // Model attributes are defined here
     id_provisional: {
       type: DataTypes.BIGINT,
+      autoIncrement: true,
       primaryKey: true,
       allowNull: false,
-      references: {
-        model: 'paradas_provisionales',
-        key: 'id_provisional'
-      },
     },
     fecha_inicio: {
       type: DataTypes.DATEONLY,
@@ -18,9 +17,10 @@ const paradaProvisional = sequelize.define(
     },
     fecha_fin: {
       type: DataTypes.DATEONLY,
+      defaultValue: DataTypes.NOW,
       allowNull: true
     },
-    id_linea: {
+    id_coordenada: {
         type: DataTypes.BIGINT,
         allowNull:false,
         references: {
@@ -35,6 +35,13 @@ const paradaProvisional = sequelize.define(
             model: 'paradas',
             key: 'id_parada'
         },
+    },
+    id_parada_provisional: {
+      type: DataTypes.BIGINT,
+      references: {
+        model: 'paradas_provisionales',
+        key: 'id_provisional'
+      }
     }
   },
   {
