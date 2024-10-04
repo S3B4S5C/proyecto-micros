@@ -1,4 +1,4 @@
-const sindicatosModelo = () => {
+const sindicatosModelo = (sequelize, DataTypes) => {
 const sindicato= sequelize.define(
   'sindicatos',
   {

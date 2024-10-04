@@ -1,3 +1,4 @@
+
 const informacionModelo = (sequelize, DataTypes) => {
   const informacionPersonal = sequelize.define(
     'informaciones_personales',
@@ -19,7 +20,7 @@ const informacionModelo = (sequelize, DataTypes) => {
       }, 
       correo: {
           type: DataTypes.STRING(255),
-          allowNull: false,
+          allowNull: false
       },
       sexo: {
           type: DataTypes.STRING(32),

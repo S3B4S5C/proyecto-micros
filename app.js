@@ -1,5 +1,5 @@
 import express from 'express';
-import { login } from './controllers/login.js';
+import { login, register } from './controllers/userController.js';
 const app = express();
 const port = 3000
 
@@ -11,6 +11,8 @@ app.get('/', (req, res) => {
   });
   
 app.post('/login', login)
+
+app.post('/register', register)
 
   // Inicia el servidor
   app.listen(port, () => {

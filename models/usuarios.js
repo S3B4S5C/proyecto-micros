@@ -16,7 +16,7 @@ const usuariosModelo = (sequelize, DataTypes)=> {
         type: DataTypes.STRING(),
         allowNull: false,
       },
-      idInformacion: {
+      id_informacion: {
         type: DataTypes.UUID,
         allowNull: false,
         field: 'id_informacion',

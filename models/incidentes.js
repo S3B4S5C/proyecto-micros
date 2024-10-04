@@ -39,13 +39,14 @@ const incidente = sequelize.define(
     timestamps: false
   },
 );
+incidente.associate = function(models) {
+  incidente.belongsTo(models.Turno, {
+      foreignKey: ['usuario_chofer', 'id_micro'],
+      targetKeyKey: ['usuario_chofer', 'id_micro'],
+      as: 'turno',
+  })
+};
   return incidente
 };
-Incidente.associate = function(models) {
-    Incidente.belongsTo(models.Turno, {
-        foreignKey: ['usuario_chofer', 'id_micro'],
-        targetKeyKey: ['usuario_chofer', 'id_micro'],
-        as: 'turno',
-    })
-};
+
 export default incidentesModelo
