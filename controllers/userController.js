@@ -2,8 +2,9 @@ import model from '../models/index.js'
 import { uuid } from 'uuidv4'
 import { hashPassword, comparePassword } from '../services/auth.js'
 
-const existeCorreo = correo => {
-    
+const existeCorreo = async (correo) => {
+    const UsuarioExistente = await model.informacionesPersonales.findOne({ where: { correo } });
+    return UsuarioExistente !== null;
 }
 export const login = async (req, res) => {
     const { usuario, pass } = req.body
@@ -22,6 +23,9 @@ export const register = async (req, res) => {
     const { usuario, contraseña, nombre, apellido, correo, sexo, fecha_de_nacimiento, direccion, carnet } = req.body;
   
     try {
+        if (await existeCorreo(correo)) {
+            return res.status(400).json({ message: 'El correo ya está registrado' })
+        }
         const id_informacion = uuid()
         const { salt, hashedPassword } = await hashPassword(contraseña);
 
