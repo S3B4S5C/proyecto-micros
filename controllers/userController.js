@@ -130,13 +130,40 @@ export const crearOperador = async (req, res) => {
 // Getters
 
 export const getChoferes = async (req, res) => {
-    //ToDo
+    try {
+       const choferes = await model.choferes.findAll();
+       res.status(200).json({ message: 'Lista de choferes obtenida con éxito' , choferes});
+    } catch (error) {
+        res.status(500).json({ message: "Error al obtener los choferes", error: error.message});
+    }
 }
 
 export const getChofer = async (req, res) => {
-    //ToDo
+    const { usuario } = req.params;
+    try {
+        const chofer = await model.choferes.findOne({ where: { usuario_chofer: usuario } });
+        if (chofer) {
+            res.status(200).json({ meesage: "Chofer encontrado con éxito", chofer });
+        } else {
+            res.status(404).json({ message: "Chofer no encontrado" });
+        }
+    } catch (error) {
+        res.status(500),json({ message: "Error al obtener el chofer", error: error.message });
+    }
 }
 
 export const getUsuario = async (req, res) => {
-    //ToDo
+    const { usuario } = req.params;
+    try {
+        const usuarioEncontrado = await model.usuarios.findByPk(usuario, {
+            include: [{ model: model.informacionesPersonales }]
+        });
+        if (usuarioEncontrado) {
+            res.status(200).json({ message: "Usuario encontrado con éxito", usuario: usuarioEncontrado });
+        } else {
+            res.status(404).json({ message: "Usuario no encontrado "});
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Error al obtener el usuario", error: error.message });
+    }
 }
