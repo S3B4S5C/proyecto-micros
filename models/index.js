@@ -22,6 +22,8 @@ import sindicatosModelo from './sindicatos.js';
 import telefonosModelo from './telefonos.js';
 import trabajanModelo from './trabajan.js';
 import dotenv from 'dotenv';
+import choferesModelo from './choferes.js';
+import operadoresModelo from './operadores.js';
 
 dotenv.config()
 
@@ -51,6 +53,7 @@ const model = {
     sindicato: sindicatosModelo(sequelize, DataTypes),
     telefono: telefonosModelo(sequelize, DataTypes),
     trabajan: trabajanModelo(sequelize, DataTypes),
+    choferes: choferesModelo(sequelize, DataTypes),
+    operadores: operadoresModelo(sequelize, DataTypes)
 }
-
 export default model
