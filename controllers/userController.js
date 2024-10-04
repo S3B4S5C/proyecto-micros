@@ -172,3 +172,18 @@ export const getUsuario = async (req, res) => {
         res.status(500).json({ message: "Error al obtener el usuario", error: error.message });
     }
 }
+
+export const eliminarChofer = async  (req, res) => {
+    const { usuario } = req.params;
+    try{
+        const chofer = await model.choferes.findOne({ where: { usuario_chofer: usuario } });
+        if (chofer) {
+            await model.choferes.destroy({ where: {usuario_chofer: usuario } });
+            res.status(200).json({ message: "Rol de chofer eliminado con éxito" });
+        } else {
+            res.status(404).json({ message: "El usuario no tiene el rol de chofer o no existe" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Error al eliminar el rol de chofer", error: error.message });
+    }
+}
