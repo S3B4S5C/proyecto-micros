@@ -17,6 +17,9 @@ const crearCoordenada = async (uuid, latitud, longitud) => {
     await model.coordenada.create({ id_coordenada: uuid, coordenadas_lat: latitud, coordenadas_lon: longitud})
 }
 
+const eliminarCoordenada = async (uuid) => {
+    await model.coordenada.destroy({ where : {id_coordenada: uuid} })
+}
 export const registrarSindicato = async (req, res) => {
     const { nombre } = req.body;
     try{
@@ -55,22 +58,23 @@ export const crearRuta = async (req, res) => {
 
 export const crearParada = async (req, res) => {
     const { nombre, orden , ruta, latitud, longitud } = req.body
+    const id_parada = uuid()
+    const coordenada = uuid()
     try{
-        const id_parada = uuid()
-        const coordenada = uuid()
         await crearCoordenada(coordenada, latitud, longitud)
         const paradaNueva = await model.parada.create({ id_parada, nombre_parada: nombre, orden_parada: orden, id_ruta: ruta, id_coordenada: coordenada});
         res.status(201).json({ message: 'Parada registrada con éxito', parada: paradaNueva });
     } catch (error) {
+        await eliminarCoordenada(coordenada)
         res.status(500).json({ message: 'Error al registrar la parada', error: error.message });
     }
 }
 
 export const crearParadaProvisional = async (req, res) => {
     const { fecha_inicio, fecha_fin, parada, latitud, longitud, id_parada_provisional } = req.body;
+    const id_provisional = uuid()
+    const coordenada = uuid()
     try{
-        const id_provisional = uuid()
-        const coordenada = uuid()
         await crearCoordenada(coordenada, latitud, longitud)
         const paradaProvisionalNueva = await model.paradaProvisional.create(
             { 
@@ -83,6 +87,7 @@ export const crearParadaProvisional = async (req, res) => {
             })
         res.status(201).json({ message: 'Parada provisional registrada con éxito', parada: paradaProvisionalNueva });
     } catch (error) {
+        await eliminarCoordenada(coordenada)
         res.status(500).json({ message: 'Error al registrar la parada provisional', error: error.message });
     }
 }
@@ -108,12 +113,14 @@ export const eliminarParada = async (req, res) => {
     const { id }= req.params;
     try{
         const parada = await model.parada.findByPk(id);
-        const coordenada = await model.coordenada.findByPk(parada.id_coordenada)
         if (!parada){
             return res.status(404).json({ message: 'Parada  no encontrada' });
         }
+        const coordenada = await model.coordenada.findByPk(parada.id_coordenada)
         await parada.destroy();
+        if (coordenada) {
         await coordenada.destroy({});
+        }
         res.status(200).json({ message: "Parada eliminada con éxito" });
     } catch (error){
         res.status(500).json({ message: "Error al eliminar la parada", error: error.message });
