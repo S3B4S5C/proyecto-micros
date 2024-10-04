@@ -6,22 +6,21 @@ const paradaProvisional = sequelize.define(
   {
     // Model attributes are defined here
     id_provisional: {
-      type: DataTypes.BIGINT,
-      autoIncrement: true,
+      type: DataTypes.UUID,
       primaryKey: true,
       allowNull: false,
     },
     fecha_inicio: {
       type: DataTypes.DATEONLY,
+      defaultValue: DataTypes.NOW,
       allowNull: false,
     },
     fecha_fin: {
       type: DataTypes.DATEONLY,
-      defaultValue: DataTypes.NOW,
       allowNull: true
     },
     id_coordenada: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.UUID,
         allowNull:false,
         references: {
             model: 'coordenadas',
@@ -30,14 +29,14 @@ const paradaProvisional = sequelize.define(
         onDelete:  'CASCADE',
     },
     id_parada: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.UUID,
         references: {
             model: 'paradas',
             key: 'id_parada'
         },
     },
     id_parada_provisional: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.UUID,
       references: {
         model: 'paradas_provisionales',
         key: 'id_provisional'

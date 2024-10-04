@@ -4,7 +4,7 @@ const coordenada = sequelize.define(
   {
     // Model attributes are defined here
     id_coordenada: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.UUID,
       autoIncrement: true,
       primaryKey: true,
       allowNull: false

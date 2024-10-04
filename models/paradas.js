@@ -4,7 +4,7 @@ const parada= sequelize.define(
   {
     // Model attributes are defined here
     id_parada: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.UUID,
       autoIncrement: true,
       primaryKey: true,
       allowNull: false
@@ -26,7 +26,7 @@ const parada= sequelize.define(
         }
     },
     id_coordenada: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
             model: 'coordenadas',

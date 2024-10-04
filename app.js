@@ -2,6 +2,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import { login, logout, register } from './controllers/userController.js';
 import usuarioRouter from './routes/usuarioRoutes.js';
+import rutasRouter from './routes/routesRoutes.js'
 import { authRequired } from './middlewares/authRequired.js';
 const app = express();
 const port = 3000
@@ -18,7 +19,9 @@ app.get('/', (req, res) => {
 app.post('/login', login)
 app.post('/register', register)
 app.post('/logout', logout)
+
 app.use('/usuarios', usuarioRouter)
+app.use('/rutas', rutasRouter)
 
 app.get('/chilito', authRequired, (req, res) => {
   res.status(201).json({message: 'ruta protegida'})
