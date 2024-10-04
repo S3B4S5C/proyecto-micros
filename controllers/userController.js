@@ -1,6 +1,7 @@
 import model from '../models/index.js'
 import { uuid } from 'uuidv4'
 import { hashPassword, comparePassword, generateToken } from '../services/auth.js'
+import { CODIGO_OPERADOR } from '../config.js';
 
 const existeCorreo = async (correo) => {
     const UsuarioExistente = await model.informacionesPersonales.findOne({ where: { correo } });
@@ -113,17 +114,22 @@ export const crearChofer = async (req, res) => {
 }
 
 export const crearOperador = async (req, res) => {
-    const { usuario } = req.body 
-    try {
-        if (existeUsuario(usuario)) {
-            await model.choferes.create({ usuario_operador: usuario })
-            res.status(201).json({ message: 'Operador creado con exito'})
+    const { usuario, codigo } = req.body 
+    if (codigo == CODIGO_OPERADOR){
+        try {
+            if (existeUsuario(usuario)) {
+                await model.choferes.create({ usuario_operador: usuario })
+                res.status(201).json({ message: 'Operador creado con exito'})
+            }
+            else {
+                res.status(404).json({ message: 'Usuario no encontrado' })
+            }
+        } catch (error) {
+            res.status(500).json({ message: "Error al crear Operador", error: error.message})
         }
-        else {
-            res.status(404).json({ message: 'Usuario no encontrado' })
-        }
-    } catch (error) {
-        res.status(500).json({ message: "Error al crear Operador", error: error.message})
+    }
+    else {
+        res.status(401).json({ message: "Codigo Incorrecto", error: error.message})
     }
 }
 
@@ -155,11 +161,10 @@ export const getChofer = async (req, res) => {
 export const getUsuario = async (req, res) => {
     const { usuario } = req.params;
     try {
-        const usuarioEncontrado = await model.usuarios.findByPk(usuario, {
-            include: [{ model: model.informacionesPersonales }]
-        });
+        const usuarioEncontrado = await model.usuarios.findByPk(usuario)
+        const informacionUsuario = await model.informacionesPersonales.findByPk(usuarioEncontrado.id_informacion)
         if (usuarioEncontrado) {
-            res.status(200).json({ message: "Usuario encontrado con éxito", usuario: usuarioEncontrado });
+            res.status(200).json({ message: "Usuario encontrado con éxito", usuario: usuarioEncontrado, informacion: informacionUsuario });
         } else {
             res.status(404).json({ message: "Usuario no encontrado "});
         }

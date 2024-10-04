@@ -9,6 +9,7 @@ const port = 3000
 
 app.use(express.json())
 app.use(cookieParser())
+
 app.get('/', (req, res) => {
     res.send('¡Hola Mundo!');
   });

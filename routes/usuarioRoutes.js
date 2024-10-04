@@ -7,6 +7,7 @@ router.put('/update', updateUsuario)
 router.post('/crearChofer', crearChofer)
 router.post('/crearOperador', crearOperador)
 router.get('/choferes', getChoferes)
-router.get('/choferes:id', getChofer)
-router.get('/usuarios:id', getUsuario)
+router.get('/choferes:usuario', getChofer)
+router.get('/:usuario', getUsuario)
+
 export default router
