@@ -125,3 +125,55 @@ export const eliminarParada = async (req, res) => {
         res.status(500).json({ message: "Error al eliminar la parada", error: error.message });
     }
 }
+
+export const getRutas = async (req, res) => {
+    const { id_linea } = req.body
+    try {
+        const rutas = await model.ruta.findAll({
+            where: {
+                id_linea: id_linea
+            }
+        })
+        res.status(200).json(rutas)
+    } catch (error) {
+        res.status(400).json({message:"Error al obtener rutas", error: error.message})
+    }
+}
+
+export const getRuta = async (req, res) => {
+    const { id_ruta } = req.params
+    try {
+        const rutas = await model.ruta.findByPk(id_ruta)
+        res.status(200).json(rutas)
+    } catch (error) {
+        res.status(400).json({message:"Error al obtener rutas", error: error.message})
+    }
+}
+
+export const getParadas = async (req, res) => {
+    const { id_ruta } = req.params
+    try {
+        const paradas = await model.parada.findAll({
+            where: {
+                id_ruta: id_ruta
+            }
+        })
+        res.status(200).json(paradas)
+    } catch (error) {
+        res.status(400).json({message:"Error al obtener rutas", error: error.message})
+    }
+}
+
+export const getParadasProvisionales = async (req, res) => {
+    const { id_parada } = req.params
+    try {
+        const paradas = await model.paradaProvisional.findAll({
+            where: {
+                id_parada: id_parada
+            }
+        })
+        res.status(200).json(paradas)
+    } catch (error) {
+        res.status(400).json({message:"Error al obtener rutas", error: error.message})
+    }
+}

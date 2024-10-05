@@ -3,6 +3,7 @@ import { uuid } from 'uuidv4'
 import { hashPassword, comparePassword, generateToken } from '../services/auth.js'
 import { CODIGO_OPERADOR } from '../config.js';
 
+
 const existeCorreo = async (correo) => {
     const UsuarioExistente = await model.informacionesPersonales.findOne({ where: { correo } });
     return UsuarioExistente !== null;

@@ -1,14 +1,16 @@
 import express from 'express'
 import { updateUsuario, crearChofer, crearOperador, getChoferes, getChofer, getUsuario } from '../controllers/userController.js'
 import { validateSchema } from '../middlewares/validator.middleware.js'
-import { registerSchema, loginSchema, choferSchema, operadorSchema, updateUsuarioSchema, } from '../schemas/user.schema.js'
+import { authRequired } from '../middlewares/authRequired.js'
+import { operadorValidation } from '../middlewares/roleValidation.js'
+import { choferSchema, operadorSchema, updateUsuarioSchema, } from '../schemas/user.schema.js'
 const router = express.Router()
 
-router.put('/update', validateSchema(updateUsuarioSchema), updateUsuario)
-router.post('/crearChofer', validateSchema(choferSchema),crearChofer)
+router.put('/update', authRequired, validateSchema(updateUsuarioSchema), updateUsuario)
+router.post('/crearChofer', authRequired, operadorValidation, validateSchema(choferSchema), crearChofer)
 router.post('/crearOperador',validateSchema(operadorSchema), crearOperador)
-router.get('/choferes', getChoferes)
-router.get('/choferes:usuario', getChofer)
+router.get('/choferes', authRequired, operadorValidation, getChoferes)
+router.get('/choferes:usuario', authRequired, operadorValidation, getChofer)
 router.get('/:usuario', getUsuario)
 
 export default router
