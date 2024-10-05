@@ -89,7 +89,11 @@ export const getChofer = async (req, res) => {
     try {
         const chofer = await model.choferes.findOne({ where: { usuario_chofer: usuario } });
         if (chofer) {
-            res.status(200).json({ meesage: "Chofer encontrado con éxito", chofer });
+            const usuario = await model.usuarios.findByPk(chofer.usuario_chofer)
+            const informacionPersonal = await model.informacionesPersonales.findByPk(usuario.id_informacion,
+                { attributes: ['nombre', 'apellido', 'correo', 'sexo', 'fecha_de_nacimiento', "direccion", "carnet"] })
+
+            res.status(200).json({ meesage: "Chofer encontrado con éxito", chofer, informacionPersonal });
         } else {
             res.status(404).json({ message: "Chofer no encontrado" });
         }
@@ -101,10 +105,20 @@ export const getChofer = async (req, res) => {
 export const getUsuario = async (req, res) => {
     const { usuario } = req.params;
     try {
-        const usuarioEncontrado = await model.usuarios.findByPk(usuario)
-        const informacionUsuario = await model.informacionesPersonales.findByPk(usuarioEncontrado.id_informacion)
+        const usuarioEncontrado = await model.usuarios.findByPk(usuario, { attributes: ['usuario', 'id_informacion'] })
+        const informacionUsuario = await model.informacionesPersonales.findByPk(usuarioEncontrado.id_informacion, 
+            { attributes: ['nombre', 'apellido', 'correo', 'sexo', 'fecha_de_nacimiento', "direccion", "carnet"] }  
+        )
+        const telefonos = await model.telefono.findAll(
+            { 
+                attributes: ['telefono'],
+                where: 
+                { 
+                    id_informacion: usuarioEncontrado.id_informacion 
+                }
+            })
         if (usuarioEncontrado) {
-            res.status(200).json({ message: "Usuario encontrado con éxito", usuario: usuarioEncontrado, informacion: informacionUsuario });
+            res.status(200).json({ message: "Usuario encontrado con éxito", usuario: {nombre_de_usuario: usuarioEncontrado.usuario, informacion: informacionUsuario, telefonos: telefonos }});
         } else {
             res.status(404).json({ message: "Usuario no encontrado "});
         }

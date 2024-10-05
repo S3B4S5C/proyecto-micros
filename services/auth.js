@@ -9,9 +9,8 @@ export const hashPassword = async (password) => {
 };
 
 export const comparePassword = async (password, hashedPassword) => {
-  await bcrypt.compare(password, hashedPassword, (error, result) => {
-    return result
-  })
+  const result = await bcrypt.compare(password, hashedPassword)
+  return result
 };
 
 export const generateToken = async (id) => {

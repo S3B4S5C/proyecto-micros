@@ -27,6 +27,7 @@ router.post('/paradas/provisionales/crear', authRequired, operadorValidation, cr
 router.put('/paradas/provisionales/:id', authRequired, operadorValidation, deshabilitarParadaProvisional)
 router.delete('/paradas/eliminar/:id', authRequired, operadorValidation, eliminarParada)
 
+
 router.get('', getRutas)
 router.get('/:id_ruta', getRuta)
 router.get('/paradas/:id_ruta', getParadas)
