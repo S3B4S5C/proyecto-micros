@@ -3,8 +3,14 @@ import cookieParser from 'cookie-parser';
 import { login, logout, register } from './controllers/userController.js';
 import usuarioRouter from './routes/usuarioRoutes.js';
 import rutasRouter from './routes/routesRoutes.js'
+import { operadorValidation } from './middlewares/roleValidation.js';
 import { authRequired } from './middlewares/authRequired.js';
+import { validateSchema } from './middlewares/validator.middleware.js';
+import { loginSchema, registerSchema } from './schemas/user.schema.js';
+
+
 const app = express();
+
 const port = 3000
 
 
@@ -16,14 +22,14 @@ app.get('/', (req, res) => {
   });
 
   
-app.post('/login', login)
-app.post('/register', register)
+app.post('/login', validateSchema(loginSchema), login)
+app.post('/register', validateSchema(registerSchema), register)
 app.post('/logout', logout)
 
 app.use('/usuarios', usuarioRouter)
 app.use('/rutas', rutasRouter)
 
-app.get('/chilito', authRequired, (req, res) => {
+app.get('/chilito', authRequired, operadorValidation, (req, res) => {
   res.status(201).json({message: 'ruta protegida'})
 })
 

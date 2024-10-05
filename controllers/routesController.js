@@ -1,7 +1,5 @@
 import { uuid } from 'uuidv4';
 import model from '../models/index.js'
-import paradasModelo from '../models/paradas.js';
-import paradasProvisionalesModelo from '../models/paradas_provisionales.js';
 
 const existeSindicato = async (sindicato) => {
     const SindicatoExistente = await model.sindicato.findOne( { where: { nombre: sindicato }});
@@ -20,6 +18,7 @@ const crearCoordenada = async (uuid, latitud, longitud) => {
 const eliminarCoordenada = async (uuid) => {
     await model.coordenada.destroy({ where : {id_coordenada: uuid} })
 }
+
 export const registrarSindicato = async (req, res) => {
     const { nombre } = req.body;
     try{

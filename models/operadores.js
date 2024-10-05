@@ -11,6 +11,14 @@ const operadoresModelo = (sequelize, DataTypes)=> {
             model: 'usuarios',
             key: 'usuario'
           }
+        },
+        id_linea: {
+          type: DataTypes.BIGINT,
+          allowNull: false,
+          references: {
+            model: 'lineas',
+            key: 'id_linea'
+          }
         }
     },
       {

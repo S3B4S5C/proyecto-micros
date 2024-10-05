@@ -64,16 +64,13 @@ export const register = async (req, res) => {
 }
 
 export const updateUsuario = async (req, res) => {
-    const { usuario, nombre, apellido, correo, sexo, fecha_de_nacimiento, direccion, carnet } = req.body
+    const { usuario, nombre, apellido, correo, direccion } = req.body
 
     const datos = {
         ...(nombre && { nombre }),
         ...(apellido && { apellido }),
         ...(correo && { correo }),
-        ...(sexo && { sexo }),
-        ...(fecha_de_nacimiento && { fecha_de_nacimiento }),
-        ...(direccion && { direccion }),
-        ...(carnet && { carnet })
+        ...(direccion && { direccion })
     }
     try {
         const usuarioSeleccionado = await model.usuarios.findByPk(usuario)
@@ -114,11 +111,11 @@ export const crearChofer = async (req, res) => {
 }
 
 export const crearOperador = async (req, res) => {
-    const { usuario, codigo } = req.body 
+    const { usuario, codigo, id_linea } = req.body 
     if (codigo == CODIGO_OPERADOR){
         try {
             if (existeUsuario(usuario)) {
-                await model.choferes.create({ usuario_operador: usuario })
+                await model.operadores.create({ usuario_operador: usuario, id_linea })
                 res.status(201).json({ message: 'Operador creado con exito'})
             }
             else {
@@ -129,7 +126,7 @@ export const crearOperador = async (req, res) => {
         }
     }
     else {
-        res.status(401).json({ message: "Codigo Incorrecto", error: error.message})
+        res.status(401).json({ message: "Codigo Incorrecto", error: "Codigo Incorrecto"})
     }
 }
 
