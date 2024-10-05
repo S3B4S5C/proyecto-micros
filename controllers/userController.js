@@ -1,6 +1,4 @@
 import model from '../models/index.js'
-import { uuid } from 'uuidv4'
-import { hashPassword, comparePassword, generateToken } from '../services/auth.js'
 import { CODIGO_OPERADOR } from '../config.js';
 
 
@@ -76,8 +74,6 @@ export const crearOperador = async (req, res) => {
         res.status(401).json({ message: "Codigo Incorrecto", error: "Codigo Incorrecto"})
     }
 }
-
-// Getters
 
 export const getChoferes = async (req, res) => {
     try {

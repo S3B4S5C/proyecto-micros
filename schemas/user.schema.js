@@ -15,7 +15,7 @@ export const registerSchema = z.object({
 
 export const loginSchema = z.object({
     usuario: z.string().min(1, { message: "El usuario es obligatorio" }),
-    pass: z.string().min(1, {message: "La contraseña es obligatorio" }),
+    contraseña: z.string().min(1, {message: "La contraseña es obligatorio" }),
 });
 
 export const choferSchema = z.object({

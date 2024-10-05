@@ -1,6 +1,6 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import { login, logout, register } from './controllers/userController.js';
+import { login, logout, register } from './controllers/sesionController.js';
 import usuarioRouter from './routes/usuarioRoutes.js';
 import rutasRouter from './routes/routesRoutes.js'
 import { operadorValidation } from './middlewares/roleValidation.js';

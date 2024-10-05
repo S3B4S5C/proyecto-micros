@@ -1,7 +1,6 @@
 import model from '../models/index.js'
 import { uuid } from 'uuidv4'
 import { hashPassword, comparePassword, generateToken } from '../services/auth.js'
-import { password } from 'pg/lib/defaults.js';
 
 
 const existeCorreo = async (correo) => {
