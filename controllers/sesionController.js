@@ -4,6 +4,11 @@ import { hashPassword, comparePassword, generateToken } from '../services/auth.j
 import { password } from 'pg/lib/defaults.js';
 
 
+const existeTelefono = async (telefono) => {
+    const telefonoExistente = await model.telefono.findOne({ where: { telefono }});
+    return telefonoExistente !== null;
+}
+
 const existeCorreo = async (correo) => {
     const UsuarioExistente = await model.informacionesPersonales.findOne({ where: { correo } });
     return UsuarioExistente !== null;
@@ -38,9 +43,25 @@ export const logout = async (req, res) => {
     return res.status(200).json({ message: 'Logout'})
 }
 
+export const registrarTelefono = async(req, res, id_informacion) => {
+    const { telefono } = req.body;
+    try{
+        if (await existeTelefono(telefono)){
+            return res.status(400).json({ message: 'El telefono ya esta en uso'});
+        }
+        const telefonoCount = await model.telefono.count({ where: { id_informacion}});
+        if (telefonoCount >= 2) {
+            return res.status(400).json({ message: 'No se pueden registrar más de dos teléfonos para este usuario' });
+        }
+        await model.telefono.create({ telefono, id_informacion});
+        return res.status(201).json({ message: 'Telefono registrado con exito '})
+    } catch (error){
+        res.status(500).json({ message: 'Error al registrar telefono', error: error.message });
+    }
+}
+
 export const register = async (req, res) => {
     const { usuario, contraseña, nombre, apellido, correo, sexo, fecha_de_nacimiento, direccion, carnet } = req.body;
-  
     try {
         if (await existeUsuario(usuario)) {
             return res.status(400).json({ message: 'El nombre de usuario ya está en uso' })
