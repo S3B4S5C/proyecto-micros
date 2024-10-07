@@ -170,11 +170,10 @@ export const login = async (req, res) => {
   if (!usuarioLogged)
     return res.status(404).json({ message: "El usuario no existe" });
   if (await comparePassword(contraseña, usuarioLogged.contraseña)) {
-    const token = await generateT oken(usuario);
+    const token = await generateToken(usuario);
 
     res.cookie("token", token);
-    res.status(200).json({ token: token,
-      message: "Inicio de sesión exitoso" });
+    res.status(200).json({ token: token, message: "Inicio de sesión exitoso" });
     // return res.json({token})
   } else {
     res.status(401).json({ message: "Contraseña incorrecta" });
