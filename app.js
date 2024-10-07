@@ -18,18 +18,20 @@ import cors from "cors";
 const app = express();
 
 const port = 3000;
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
+
 app.use(express.json());
 app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.send("¡Hola Mundo!");
 });
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 app.post("/login", validateSchema(loginSchema), login);
 app.post("/register", validateSchema(registerSchema), register);
