@@ -184,12 +184,10 @@ export const verifyToken = async (req, res) => {
   if (!token) return res.status(401).json({ message: "Unauthorized" });
   jwt.verify(token, TOKEN_KEY, async (err, user) => {
     if (err) return res.status(401).json({ message: "Unauthorized" });
-    const userFound = await model.usuarios.findByPk(user.id);
+    const userFound = await model.usuarios.findByPk(user.usuario);
     if (!userFound) return res.status(401).json({ message: "Unauthorized" });
     return res.json({
-      id: userFound.id,
-      username: userFound.username,
-      email: userFound.email,
+      message: "hola",
     });
   });
 };
