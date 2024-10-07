@@ -5,6 +5,7 @@ import {
   logout,
   register,
   registrarTelefono,
+  verifyToken,
 } from "./controllers/sesionController.js";
 import usuarioRouter from "./routes/usuarioRoutes.js";
 import rutasRouter from "./routes/routesRoutes.js";
@@ -17,7 +18,7 @@ import cors from "cors";
 const app = express();
 
 const port = 3000;
-app.use(express.json());
+wapp.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
@@ -34,6 +35,7 @@ app.post("/register", validateSchema(registerSchema), register);
 app.post("/logout", logout);
 
 app.use("/usuarios", usuarioRouter);
+router.get("/verify", verifyToken);
 
 app.use("/rutas", rutasRouter);
 

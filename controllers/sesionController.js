@@ -5,7 +5,8 @@ import {
   comparePassword,
   generateToken,
 } from "../services/auth.js";
-
+import jwt from "jsonwebtoken";
+import { TOKEN_KEY } from "../config.js";
 const existeTelefono = async (telefono) => {
   const telefonoExistente = await model.telefono.findOne({
     where: { telefono },
@@ -23,22 +24,6 @@ const existeCorreo = async (correo) => {
 const existeUsuario = async (usuario) => {
   const UsuarioExistente = await model.usuarios.findByPk(usuario);
   return UsuarioExistente !== null;
-};
-
-export const login = async (req, res) => {
-  const { usuario, contraseña } = req.body;
-  const usuarioLogged = await model.usuarios.findByPk(usuario);
-  console.log(JSON.stringify(usuarioLogged, null, 2));
-  if (!usuarioLogged)
-    return res.status(404).json({ message: "El usuario no existe" });
-  if (await comparePassword(contraseña, usuarioLogged.contraseña)) {
-    const token = await generateToken(usuario);
-
-    res.cookie("token", token);
-    res.status(200).json({ message: "Inicio de sesión exitoso" });
-  } else {
-    res.status(401).json({ message: "Contraseña incorrecta" });
-  }
 };
 
 export const logout = async (req, res) => {
@@ -176,4 +161,35 @@ export const updateContraseña = async (req, res) => {
       error: error.message,
     });
   }
+};
+
+export const login = async (req, res) => {
+  const { usuario, contraseña } = req.body;
+  const usuarioLogged = await model.usuarios.findByPk(usuario);
+  console.log(JSON.stringify(usuarioLogged, null, 2));
+  if (!usuarioLogged)
+    return res.status(404).json({ message: "El usuario no existe" });
+  if (await comparePassword(contraseña, usuarioLogged.contraseña)) {
+    const token = await generateToken(usuario);
+
+    res.cookie("token", token);
+    res.status(200).json({ message: "Inicio de sesión exitoso" });
+  } else {
+    res.status(401).json({ message: "Contraseña incorrecta" });
+  }
+};
+
+export const verifyToken = async (req, res) => {
+  const { token } = req.cookies;
+  if (!token) return res.status(401).json({ message: "Unauthorized" });
+  jwt.verify(token, TOKEN_KEY, async (err, user) => {
+    if (err) return res.status(401).json({ message: "Unauthorized" });
+    const userFound = await model.usuarios.findByPk(user.id);
+    if (!userFound) return res.status(401).json({ message: "Unauthorized" });
+    return res.json({
+      id: userFound.id,
+      username: userFound.username,
+      email: userFound.email,
+    });
+  });
 };
