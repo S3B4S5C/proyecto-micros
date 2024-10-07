@@ -180,7 +180,7 @@ export const login = async (req, res) => {
 };
 
 export const verifyToken = async (req, res) => {
-  /*   const { token } = req.cookies;
+  const { token } = req.cookies;
   if (!token) return res.status(401).json({ message: "Unauthorized" });
   jwt.verify(token, TOKEN_KEY, async (err, user) => {
     if (err) return res.status(401).json({ message: "Unauthorized" });
@@ -189,6 +189,6 @@ export const verifyToken = async (req, res) => {
     return res.json({
       message: "hola",
     });
-  }); */
-  res.json({ message: "hola" });
+  });
+  // res.json({ message: "hola" });
 };
