@@ -130,14 +130,12 @@ export const register = async (req, res, next) => {
     });
     res.cookie("token", token);
 
-    res
-      .status(201)
-      .json({
-        message: "Usuario registrado con éxito",
-        user: nuevoUsuario,
-        informacion: nuevaInformacion,
-        telefonos: telefonos,
-      });
+    res.status(201).json({
+      message: "Usuario registrado con éxito",
+      user: nuevoUsuario,
+      informacion: nuevaInformacion,
+      telefonos: telefonos,
+    });
   } catch (error) {
     res
       .status(500)
@@ -173,11 +171,9 @@ export const updateContraseña = async (req, res) => {
     await usuarioExistente.save();
     res.status(200).json({ message: "Contraseña actualizada con éxito" });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Error al actualizar la contraseña",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error al actualizar la contraseña",
+      error: error.message,
+    });
   }
 };
