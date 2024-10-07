@@ -173,7 +173,9 @@ export const login = async (req, res) => {
     const token = await generateToken(usuario);
 
     res.cookie("token", token);
-    res.status(200).json({ token: token, message: "Inicio de sesión exitoso" });
+    res
+      .status(200)
+      .json({ token: token, message: "Inicio de sesión exitoso carajo" });
     // return res.json({token})
   } else {
     res.status(401).json({ message: "Contraseña incorrecta" });
