@@ -18,7 +18,7 @@ import cors from "cors";
 const app = express();
 
 const port = 3000;
-wapp.use(express.json());
+app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
