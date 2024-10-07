@@ -181,11 +181,12 @@ export const login = async (req, res) => {
 
 export const verifyToken = async (req, res) => {
   const { token } = req.cookies;
-  if (!token) return res.status(401).json({ message: "Unauthorized" });
+  if (!token) return res.status(401).json({ message: "No existe token" });
   jwt.verify(token, TOKEN_KEY, async (err, user) => {
-    if (err) return res.status(401).json({ message: "Unauthorized" });
+    if (err) return res.status(401).json({ message: "Token no valido" });
     const userFound = await model.usuarios.findByPk(user.usuario);
-    if (!userFound) return res.status(401).json({ message: "Unauthorized" });
+    if (!userFound)
+      return res.status(401).json({ message: "Usuario no encontrado" });
     return res.json({
       message: "hola",
     });
