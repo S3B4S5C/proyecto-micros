@@ -35,7 +35,7 @@ export const login = async (req, res) => {
     const { usuario, contraseña } = req.body
     try {
         const usuarioLogged = await model.usuarios.findByPk(usuario)
-
+        const informacion = await model.informacionesPersonales.findByPk(usuarioLogged.id_informacion)
         if (!usuarioLogged)
             return res.status(404).json({ message: 'El usuario no existe' })
 
@@ -45,7 +45,20 @@ export const login = async (req, res) => {
             const token = await generateToken(usuario, rol)
             
             res.cookie('token', token)
-            res.status(200).json({ message: 'Inicio de sesión exitoso' })
+            res.status(200).json(
+                {
+                    message: 'Inicio de sesión exitoso',
+                    token: token,
+                    datos: {
+                        nombre: informacion.nombre,
+                        apellido: informacion.apellido,
+                        correo: informacion.correo,
+                        sexo: informacion.sexo,
+                        fecha_de_nacimiento: informacion.fecha_de_nacimiento,
+                        direccion: informacion.direccion,
+                        carnet: informacion.carnet
+                    },
+                })
         }
         else {
             res.status(401).json({ message: 'Contraseña incorrecta' })
@@ -136,9 +149,16 @@ export const register = async (req, res) => {
 
     res.status(201).json({
       message: "Usuario registrado con éxito",
-      user: nuevoUsuario,
-      informacion: nuevaInformacion,
-      telefonos: telefonos,
+      token: token,
+      datos: {
+        nombre: nombre,
+        apellido: apellido,
+        correo: correo,
+        sexo: sexo,
+        fecha_de_nacimiento: fecha_de_nacimiento,
+        direccion: direccion,
+        carnet: carnet,
+      },
     });
   } catch (error) {
     res
