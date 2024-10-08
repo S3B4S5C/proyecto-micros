@@ -1,7 +1,7 @@
-import model from "../models/index.js";
-import { CODIGO_OPERADOR, TOKEN_KEY } from "../config.js";
-import { verify } from "jsonwebtoken";
-import { verifyToken } from "./sesionController.js";
+import model from '../models/index.js'
+import { CODIGO_OPERADOR, TOKEN_KEY } from '../config.js';
+
+
 
 const existeUsuario = async (usuario) => {
   const UsuarioExistente = await model.usuarios.findByPk(usuario);
@@ -9,8 +9,8 @@ const existeUsuario = async (usuario) => {
 };
 
 export const updateUsuario = async (req, res) => {
-  const { nombre, apellido, correo, direccion } = req.body;
-  usuario = req.usuario.id;
+  const { usuario, nombre, apellido, correo, direccion } = req.body;
+
   const datos = {
     ...(nombre && { nombre }),
     ...(apellido && { apellido }),

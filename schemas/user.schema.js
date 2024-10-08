@@ -29,11 +29,11 @@ export const operadorSchema = z.object({
 });
 
 export const updateUsuarioSchema = z.object({
-    nombre: z.string().min(1, { message: "El nombre es obligatorio"}).max(100),
-    apellido:z.string().min(1, { message: "El nombre es obligatorio"}).max(100),
-    correo: z.string().email({ message: "Correo electrónico no válido "}),
-    sexo: z.enum(["M", "F"]),
-    fecha_de_nacimiento: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Formato de fecha inválido. Debe ser YYYY-MM-DD" }), 
-    direccion: z.string().min(1, { message: "La dirección es obligatoria" }).max(200),
-    carnet: z.string().min(5, { message: "El carnet es obligatorio"}).max(15),
+    nombre: z.string().max(100, { message: "El nombre debe tener como maximo 100 caracteres"}).optional(),
+    apellido:z.string().max(100, { message: "El apellido debe tener como maximo 100 caracteres"}).optional(),
+    correo: z.string().email({ message: "Correo electrónico no válido "}).optional(),
+    sexo: z.enum(["M", "F"], { message: "El sexo debe ser 'M' o 'F'" }).optional(),
+    fecha_de_nacimiento: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Formato de fecha inválido. Debe ser YYYY-MM-DD" }).optional(), 
+    direccion: z.string().max(200, { message: "La direccion debe tener como maximo 200 caracteres"}).optional(),
+    carnet: z.string().max(15, { message: "El carnet debe tener como maximo 15 digitos"}).optional(),
 });
