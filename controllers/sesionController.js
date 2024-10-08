@@ -178,7 +178,7 @@ export const login = async (req, res) => {
     res.cookie("token", token);
     res.status(200).json({
       token: token,
-      message: "Inicio de sesión exitoso ",
+      message: "Inicio de sesión exitoso xd",
       datos: {
         nombre: infoUsuario.nombre,
         apellido: infoUsuario.apellido,
