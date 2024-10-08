@@ -31,6 +31,7 @@ export const updateUsuario = async (req, res) => {
       );
       res.status(201).json({
         datos: {
+            usuario:usuario,
           nombre: idInfo.nombre,
           apellido: idInfo.apellido,
           correo: idInfo.correo,

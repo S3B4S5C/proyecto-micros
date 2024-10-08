@@ -180,6 +180,7 @@ export const register = async (req, res) => {
       message: "Usuario registrado con éxito",
       token: token,
       datos: {
+        usuario:usuario,
         nombre: nombre,
         apellido: apellido,
         correo: correo,
