@@ -198,5 +198,8 @@ export const verifyToken = async (req, res) => {
 };
 
 export const profile = async (req, res) => {
-  return res.json({ message: "hola" });
+  return res.json({
+    profile: req.user,
+    message: "hola",
+  });
 };
