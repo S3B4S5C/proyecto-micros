@@ -1,7 +1,5 @@
 import model from '../models/index.js'
 import { CODIGO_OPERADOR, TOKEN_KEY } from '../config.js';
-import { verify } from 'jsonwebtoken';
-import { verifyToken } from './sesionController.js';
 
 
 
@@ -38,6 +36,9 @@ export const updateUsuario = async (req, res) => {
         }
     }
     catch (error) {
+        if (error instanceof z.ZodError) {
+           return res.status(500).json({ message: 'Error al actualizar usuario', error: error.issues }) 
+          }
         res.status(500).json({ message: 'Error al actualizar usuario', error: error.message });
     }
 }
