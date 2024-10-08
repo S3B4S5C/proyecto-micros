@@ -21,20 +21,21 @@ export const updateUsuario = async (req, res) => {
     const usuarioSeleccionado = await model.usuarios.findByPk(usuario);
     if (usuarioSeleccionado) {
       const idInformacion = usuarioSeleccionado.id_informacion;
-      const infoUsuario = await model.informacionesPersonales.update(datos, {
+      await model.informacionesPersonales.update(datos, {
         where: {
           id_informacion: idInformacion,
         },
       });
+      const idInfo = model.informacionesPersonales.findByPk(idInformacion);
       res.status(201).json({
         datos: {
-          nombre: infoUsuario.nombre,
-          apellido: infoUsuario.apellido,
-          correo: infoUsuario.correo,
-          sexo: infoUsuario.sexo,
-          fecha_de_nacimiento: infoUsuario.fecha_de_nacimiento,
-          direccion: infoUsuario.direccion,
-          carnet: infoUsuario.carnet,
+          nombre: idInfo.nombre,
+          apellido: idInfo.apellido,
+          correo: idInfo.correo,
+          sexo: idInfo.sexo,
+          fecha_de_nacimiento: idInfo.fecha_de_nacimiento,
+          direccion: idInfo.direccion,
+          carnet: idInfo.carnet,
         },
         message: "Usuario actualizado con exito",
       });
