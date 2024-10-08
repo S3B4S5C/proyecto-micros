@@ -171,21 +171,15 @@ export const login = async (req, res) => {
     return res.status(404).json({ message: "El usuario no existe" });
   if (await comparePassword(contraseña, usuarioLogged.contraseña)) {
     const token = await generateToken(usuario);
-
+    const infoUsuario = await model.informacionesPersonales.findByPk(
+      usuarioLogged.id_informacion
+    );
     res.cookie("token", token);
     res.status(200).json({
       token: token,
       message: "Inicio de sesión exitoso ",
       datos: {
-        usuario: usuarioLogged.id_informacion,
-        nombre: usuarioLogged.nombre,
-        apellido: usuarioLogged.apellido,
-        correo: usuarioLogged.correo,
-        sexo: usuarioLogged.sexo,
-        fecha_de_nacimiento: usuarioLogged.fecha_de_nacimiento,
-        direccion: usuarioLogged.direccion,
-        carnet: usuarioLogged.carnet,
-        telefonos: usuarioLogged.telefonos,
+        usuario: infoUsuario.nombre,
       },
     });
   } else {
