@@ -180,7 +180,13 @@ export const login = async (req, res) => {
       token: token,
       message: "Inicio de sesión exitoso ",
       datos: {
-        usuario: infoUsuario.nombre,
+        nombre: infoUsuario.nombre,
+        apellido: infoUsuario.apellido,
+        correo: infoUsuario.correo,
+        sexo: infoUsuario.sexo,
+        fecha_de_nacimiento: infoUsuario.fecha_de_nacimiento,
+        direccion: infoUsuario.direccion,
+        carnet: infoUsuario.carnet,
       },
     });
   } else {
