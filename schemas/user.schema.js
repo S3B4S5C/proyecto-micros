@@ -29,7 +29,6 @@ export const operadorSchema = z.object({
 });
 
 export const updateUsuarioSchema = z.object({
-    usuario: z.string().min(1, { message: "El usuario es obligatorio"}).max(50),
     nombre: z.string().min(1, { message: "El nombre es obligatorio"}).max(100),
     apellido:z.string().min(1, { message: "El nombre es obligatorio"}).max(100),
     correo: z.string().email({ message: "Correo electrónico no válido "}),
