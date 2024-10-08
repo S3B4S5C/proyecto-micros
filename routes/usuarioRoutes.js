@@ -11,7 +11,7 @@ router.put('/update', authRequired, validateSchema(updateUsuarioSchema), updateU
 router.post('/crearChofer', authRequired, operadorValidation, validateSchema(choferSchema), crearChofer)
 router.post('/crearOperador',validateSchema(operadorSchema), crearOperador)
 router.post('/choferes', authRequired, operadorValidation, getChoferes)
-router.post('/choferes/:usuario', authRequired, operadorValidation, getChofer)
+//router.post('/choferes/:usuario', authRequired, operadorValidation, getChofer)
 
 router.get('/:usuario', getUsuario)
 router.put('/actualizarPass', authRequired, updateContraseña)
