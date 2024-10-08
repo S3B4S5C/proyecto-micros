@@ -13,10 +13,11 @@ export const comparePassword = async (password, hashedPassword) => {
   return result
 };
 
-export const generateToken = async (id) => {
+export const generateToken = async (id, role) => {
   const token = await jwt.sign( 
     {
-      id: id
+      id: id,
+      role: role
     },
     TOKEN_KEY, 
     {
