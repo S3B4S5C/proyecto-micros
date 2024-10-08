@@ -38,7 +38,8 @@ export const registrarLinea = async (req, res) => {
         if (await existeLinea(nombre)){
             return res.status(400).json({ message: 'El nombre de la linea ya está en uso' })
         }
-        await model.linea.create({nombre_linea: nombre, id_sindicato: sindicato});
+        const sindicatoEncontrado = await model.sindicato.findOne({ where: { nombre: sindicato }})
+        await model.linea.create({nombre_linea: nombre, id_sindicato: sindicatoEncontrado.id_sindicato});
         res.status(201).json({ message: 'Linea registrada con éxito', user: nombre });
     } catch(error){
         res.status(500).json({ message: 'Error al registrar la linea', error: error.message });
@@ -46,17 +47,17 @@ export const registrarLinea = async (req, res) => {
 }
 
 export const crearRuta = async (req, res) => {
-    const { linea } = req.body;
+    const { id_linea } = req.body;
     try{
-        const rutaNueva = await model.ruta.create({ id_linea: linea});
-        res.status(201).json({ message: 'Ruta registrada con éxito', user: rutaNueva });
+        const rutaNueva = await model.ruta.create({ id_linea });
+        res.status(201).json({ message: 'Ruta registrada con éxito', ruta: rutaNueva });
     } catch (error) {
         res.status(500).json({ message: 'Error al registrar la ruta', error: error.message });
     }
 }
 
 export const crearParada = async (req, res) => {
-    const { nombre, orden , ruta, latitud, longitud } = req.body
+    const { nombre, orden, ruta, latitud, longitud } = req.body
     const id_parada = uuid()
     const coordenada = uuid()
     try{
@@ -126,6 +127,11 @@ export const eliminarParada = async (req, res) => {
     }
 }
 
+export const getLineas = async (req, res) => {
+    const lineas = await model.linea.findAll()
+    res.status(201).json(lineas)
+}
+
 export const getRutas = async (req, res) => {
     const { id_linea } = req.body
     try {
@@ -152,13 +158,29 @@ export const getRuta = async (req, res) => {
 
 export const getParadas = async (req, res) => {
     const { id_ruta } = req.params
+    let listaDeParadas = []
     try {
         const paradas = await model.parada.findAll({
             where: {
                 id_ruta: id_ruta
             }
         })
-        res.status(200).json(paradas)
+        for (const parada of paradas) {
+            const coordenada = await model.coordenada.findByPk(parada.id_coordenada)
+            const obj = {
+                nombre_parada: parada.nombre_parada,
+                orden_parada: parada.orden_parada,
+                coordenadas: {
+                    lon: coordenada.coordenadas_lon,
+                    lat: coordenada.coordenadas_lat
+                }
+            }
+            listaDeParadas.push(obj)
+        }
+        
+        listaDeParadas.sort((a, b) => a.orden_parada - b.orden_parada)
+
+        res.status(200).json(listaDeParadas)
     } catch (error) {
         res.status(400).json({message:"Error al obtener rutas", error: error.message})
     }

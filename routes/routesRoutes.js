@@ -6,6 +6,7 @@ import
     crearRuta, 
     deshabilitarParadaProvisional, 
     eliminarParada, 
+    getLineas, 
     getParadas, 
     getParadasProvisionales, 
     getRuta, 
@@ -20,6 +21,7 @@ const router = express.Router()
 
 router.post('/sindicatos/crear', registrarSindicato)
 router.post('/lineas/crear', registrarLinea)
+router.get('/lineas', getLineas)
 
 router.post('/crear', authRequired, operadorValidation, crearRuta)
 router.post('/paradas/crear', crearParada)
