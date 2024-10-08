@@ -1,5 +1,7 @@
 import model from '../models/index.js'
-import { CODIGO_OPERADOR } from '../config.js';
+import { CODIGO_OPERADOR, TOKEN_KEY } from '../config.js';
+import { verify } from 'jsonwebtoken';
+import { verifyToken } from './sesionController.js';
 
 
 
@@ -9,8 +11,8 @@ const existeUsuario = async (usuario) => {
 }
 
 export const updateUsuario = async (req, res) => {
-    const { usuario, nombre, apellido, correo, direccion } = req.body
-
+    const { nombre, apellido, correo, direccion } = req.body
+    usuario = req.usuario.id
     const datos = {
         ...(nombre && { nombre }),
         ...(apellido && { apellido }),
