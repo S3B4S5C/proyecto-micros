@@ -175,7 +175,7 @@ export const login = async (req, res) => {
     res.cookie("token", token);
     res
       .status(200)
-      .json({ token: token, message: "Inicio de sesión exitoso carajo" });
+      .json({ token: token, message: "Inicio de sesión exitoso carajo " });
     // return res.json({token})
   } else {
     res.status(401).json({ message: "Contraseña incorrecta" });
@@ -196,3 +196,5 @@ export const verifyToken = async (req, res) => {
     });
   });
 };
+
+export const profile = async (req, res) => {};

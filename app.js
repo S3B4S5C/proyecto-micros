@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import {
   login,
   logout,
+  profile,
   register,
   registrarTelefono,
   verifyToken,
@@ -36,6 +37,7 @@ app.use(
 app.post("/login", validateSchema(loginSchema), login);
 app.post("/register", validateSchema(registerSchema), register);
 app.post("/logout", logout);
+app.get("/perfil", authRequired, profile);
 
 app.use("/usuarios", usuarioRouter);
 app.get("/verify", verifyToken);
