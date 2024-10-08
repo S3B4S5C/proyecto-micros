@@ -117,9 +117,16 @@ export const register = async (req, res, next) => {
 
     res.status(201).json({
       message: "Usuario registrado con éxito",
-      user: nuevoUsuario,
-      informacion: nuevaInformacion,
-      telefonos: telefonos,
+      token: token,
+      datos: {
+        nombre: nombre,
+        apellido: apellido,
+        correo: correo,
+        sexo: sexo,
+        fecha_de_nacimiento: fecha_de_nacimiento,
+        direccion: direccion,
+        carnet: carnet,
+      },
     });
   } catch (error) {
     res
