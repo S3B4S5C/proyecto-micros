@@ -26,7 +26,9 @@ export const updateUsuario = async (req, res) => {
           id_informacion: idInformacion,
         },
       });
-      const idInfo = model.informacionesPersonales.findByPk(idInformacion);
+      const idInfo = await model.informacionesPersonales.findByPk(
+        idInformacion
+      );
       res.status(201).json({
         datos: {
           nombre: idInfo.nombre,
