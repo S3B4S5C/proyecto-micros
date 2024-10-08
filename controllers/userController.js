@@ -9,8 +9,8 @@ const existeUsuario = async (usuario) => {
 };
 
 export const updateUsuario = async (req, res) => {
-  const { nombre, apellido, correo, direccion } = req.body;
-  usuario = req.usuario.id;
+  const { usuario, nombre, apellido, correo, direccion } = req.body;
+
   const datos = {
     ...(nombre && { nombre }),
     ...(apellido && { apellido }),
