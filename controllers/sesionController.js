@@ -173,10 +173,21 @@ export const login = async (req, res) => {
     const token = await generateToken(usuario);
 
     res.cookie("token", token);
-    res
-      .status(200)
-      .json({ token: token, message: "Inicio de sesión exitoso carajo xd " });
-    // return res.json({token})
+    res.status(200).json({
+      token: token,
+      message: "Inicio de sesión exitoso ",
+      datos: {
+        usuario: usuarioLogged.usuario,
+        nombre: usuarioLogged.nombre,
+        apellido: usuarioLogged.apellido,
+        correo: usuarioLogged.correo,
+        sexo: usuarioLogged.sexo,
+        fecha_de_nacimiento: usuarioLogged.fecha_de_nacimiento,
+        direccion: usuarioLogged.direccion,
+        carnet: usuarioLogged.carnet,
+        telefonos: usuarioLogged.telefonos,
+      },
+    });
   } else {
     res.status(401).json({ message: "Contraseña incorrecta" });
   }
@@ -194,11 +205,5 @@ export const verifyToken = async (req, res) => {
       usuario: userFound.usuario,
       email: userFound.email,
     });
-  });
-};
-
-export const profile = async (req, res) => {
-  return res.json({
-    message: "hola carajo xd",
   });
 };
