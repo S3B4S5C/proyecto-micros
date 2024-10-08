@@ -177,7 +177,7 @@ export const login = async (req, res) => {
       token: token,
       message: "Inicio de sesión exitoso ",
       datos: {
-        usuario: usuarioLogged.usuario,
+        usuario: usuarioLogged.id_informacion,
         nombre: usuarioLogged.nombre,
         apellido: usuarioLogged.apellido,
         correo: usuarioLogged.correo,
