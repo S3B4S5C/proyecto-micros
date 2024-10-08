@@ -174,6 +174,7 @@ export const login = async (req, res) => {
     const infoUsuario = await model.informacionesPersonales.findByPk(
       usuarioLogged.id_informacion
     );
+    console.log(infoUsuario);
     res.cookie("token", token);
     res.status(200).json({
       token: token,
