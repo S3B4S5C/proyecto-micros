@@ -45,7 +45,7 @@ export const login = async (req, res) => {
   try {
     const usuarioLogged = await model.usuarios.findByPk(usuario);
     const informacion = await model.informacionesPersonales.findByPk(
-      usuarioLogged.id_informacion
+      usuarioLogged.id_informacion,
     );
     if (!usuarioLogged)
       return res.status(404).json({ message: "El usuario no existe" });
@@ -91,15 +91,17 @@ export const logout = async (req, res) => {
 
 export const registrarTelefonoNuevo = async (usuario, telefono) => {
   const usuarioEncontrado = await model.usuarios.findByPk(usuario);
+  try {
+    if (!usuarioEncontrado)
+      throw new Error({ message: "Usuario no encontrado" });
 
-  if (!usuarioEncontrado) throw new Error({ message: "Usuario no encontrado" });
+    if (await existeTelefono(telefono))
+      throw new Error({ message: `El telefono ${telefono} ya esta en uso` });
 
-  if (await existeTelefono(telefono))
-    throw new Error({ message: `El telefono ${telefono} ya esta en uso` });
+    const id_informacion = usuarioEncontrado.id_informacion;
 
-  const id_informacion = usuarioEncontrado.id_informacion;
-
-  return await model.telefono.create({ telefono, id_informacion });
+    return await model.telefono.create({ telefono, id_informacion });
+  } catch (error) {}
 };
 
 export const registrarTelefono = async (req, res) => {
@@ -180,7 +182,7 @@ export const register = async (req, res) => {
       message: "Usuario registrado con éxito",
       token: token,
       datos: {
-        usuario:usuario,
+        usuario: usuario,
         nombre: nombre,
         apellido: apellido,
         correo: correo,
@@ -211,7 +213,7 @@ export const updateContraseña = async (req, res) => {
     console.log(contraseña_actual);
     const buscarContraseña = await comparePassword(
       contraseña_actual,
-      usuarioExistente.contraseña
+      usuarioExistente.contraseña,
     );
     if (!buscarContraseña) {
       return res

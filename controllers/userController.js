@@ -1,7 +1,5 @@
-import model from '../models/index.js'
-import { CODIGO_OPERADOR, TOKEN_KEY } from '../config.js';
-
-
+import model from "../models/index.js";
+import { CODIGO_OPERADOR, TOKEN_KEY } from "../config.js";
 
 const existeUsuario = async (usuario) => {
   const UsuarioExistente = await model.usuarios.findByPk(usuario);
@@ -26,12 +24,11 @@ export const updateUsuario = async (req, res) => {
           id_informacion: idInformacion,
         },
       });
-      const idInfo = await model.informacionesPersonales.findByPk(
-        idInformacion
-      );
+      const idInfo =
+        await model.informacionesPersonales.findByPk(idInformacion);
       res.status(201).json({
         datos: {
-            usuario:usuario,
+          usuario: usuario,
           nombre: idInfo.nombre,
           apellido: idInfo.apellido,
           correo: idInfo.correo,
@@ -126,7 +123,7 @@ export const getChofer = async (req, res) => {
             "direccion",
             "carnet",
           ],
-        }
+        },
       );
 
       res.status(200).json({
@@ -161,7 +158,7 @@ export const getUsuario = async (req, res) => {
           "direccion",
           "carnet",
         ],
-      }
+      },
     );
     const telefonos = await model.telefono.findAll({
       attributes: ["telefono"],
