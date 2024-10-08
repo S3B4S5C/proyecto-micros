@@ -46,8 +46,8 @@ export const login = async (req, res) => {
             
             res.cookie('token', token, {
                 httpOnly: true,     // Protege la cookie para que no pueda ser accedida por JavaScript en el navegador
-                secure: process.env.NODE_ENV === 'production',  // Solo en HTTPS en producción
-                sameSite: 'Strict', // Evita el envío de la cookie en solicitudes entre sitios (para mayor seguridad)
+                secure: false,  // Solo en HTTPS en producción
+                sameSite: 'None', // Evita el envío de la cookie en solicitudes entre sitios (para mayor seguridad)
                 maxAge: 24 * 60 * 60 * 1000 // Expira en 1 día (en milisegundos)
               })
             res.status(200).json(
@@ -152,8 +152,8 @@ export const register = async (req, res) => {
     });
     res.cookie('token', token, {
         httpOnly: true,     // Protege la cookie para que no pueda ser accedida por JavaScript en el navegador
-        secure: process.env.NODE_ENV === 'production',  // Solo en HTTPS en producción
-        sameSite: 'Strict', // Evita el envío de la cookie en solicitudes entre sitios (para mayor seguridad)
+        secure: false,  // Solo en HTTPS en producción
+        sameSite: 'None', // Evita el envío de la cookie en solicitudes entre sitios (para mayor seguridad)
         maxAge: 24 * 60 * 60 * 1000 // Expira en 1 día (en milisegundos)
       })
     res.status(201).json({
