@@ -43,7 +43,7 @@ router.delete(
   eliminarParada,
 );
 
-router.get("", getRutas);
+router.post("", getRutas);
 router.get("/:id_ruta", getRuta);
 router.get("/paradas/:id_ruta", getParadas);
 router.get("/paradas/provisionales/:id_parada", getParadasProvisionales);
