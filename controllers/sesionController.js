@@ -1,7 +1,8 @@
 import model from '../models/index.js'
 import { uuid } from 'uuidv4'
 import { hashPassword, comparePassword, generateToken } from '../services/auth.js'
-
+import jwt from "jsonwebtoken";
+import { TOKEN_KEY } from "../config.js";
 
 const existeTelefono = async (telefono) => {
     const telefonoExistente = await model.telefono.findOne({ where: { telefono }});
@@ -109,49 +110,78 @@ export const register = async (req, res) => {
         const id_informacion = uuid()
         const { salt, hashedPassword } = await hashPassword(contraseña);
 
-        const nuevaInformacion = await model.informacionesPersonales.create({ id_informacion, nombre, apellido, correo, sexo, fecha_de_nacimiento, direccion, carnet })  
-        const nuevoUsuario = await model.usuarios.create({ usuario, contraseña: hashedPassword, salt, id_informacion });
-        const rol = await buscarRol(usuario)
-        const token = await generateToken(usuario, rol)
-        
-        await telefonos.forEach(async telefono => {
-            await registrarTelefonoNuevo(usuario, telefono)
-        })
-        res.cookie('token', token)
+    const nuevaInformacion = await model.informacionesPersonales.create({
+      id_informacion,
+      nombre,
+      apellido,
+      correo,
+      sexo,
+      fecha_de_nacimiento,
+      direccion,
+      carnet,
+    });
+    const nuevoUsuario = await model.usuarios.create({
+      usuario,
+      contraseña: hashedPassword,
+      salt,
+      id_informacion,
+    });
+    const rol = await buscarRol(usuario)
+    const token = await generateToken(usuario, rol)
 
-        res.status(201).json({ message: 'Usuario registrado con éxito', user: nuevoUsuario, informacion: nuevaInformacion, telefonos: telefonos });
-    } catch (error) {
-        res.status(500).json({ message: 'Error al registrar usuario', error: error.message });
-    }
-}
+    await telefonos.forEach(async (telefono) => {
+      await registrarTelefonoNuevo(usuario, telefono);
+    });
+    res.cookie("token", token);
+
+    res.status(201).json({
+      message: "Usuario registrado con éxito",
+      user: nuevoUsuario,
+      informacion: nuevaInformacion,
+      telefonos: telefonos,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error al registrar usuario", error: error.message });
+  }
+};
 
 export const updateContraseña = async (req, res) => {
     const { contraseña_actual, contraseña_nueva } = req.body;
     const usuario = req.usuario.id
 
-    if(!usuario)
-        return res.status(400).json({ message: "Usuario invalido" })
-    try {
-        const usuarioExistente = await model.usuarios.findByPk(usuario);
-        if (!usuarioExistente){
-            return res.status(404).json({ message: 'Usuario no encontrado' });
-        }
-        console.log(usuarioExistente.contraseña)
-        console.log(contraseña_actual)
-        const buscarContraseña = await comparePassword(contraseña_actual, usuarioExistente.contraseña);
-        if (!buscarContraseña){
-            return res.status(401).json({ message: 'La contraseña actual es incorrecta'});
-        }
-        const { salt, hashedPassword } = await hashPassword(contraseña_nueva);
-        
-        usuarioExistente.contraseña = hashedPassword;
-        usuarioExistente.salt = salt;
-        await usuarioExistente.save();
-        res.status(200).json({ message: 'Contraseña actualizada con éxito' });
-    } catch (error){
-        res.status(500).json({ message: 'Error al actualizar la contraseña', error: error.message});
+  if (!usuario) return res.status(400).json({ message: "Usuario invalido" });
+  try {
+    const usuarioExistente = await model.usuarios.findByPk(usuario);
+    if (!usuarioExistente) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
-}
+    console.log(usuarioExistente.contraseña);
+    console.log(contraseña_actual);
+    const buscarContraseña = await comparePassword(
+      contraseña_actual,
+      usuarioExistente.contraseña
+    );
+    if (!buscarContraseña) {
+      return res
+        .status(401)
+        .json({ message: "La contraseña actual es incorrecta" });
+    }
+    const { salt, hashedPassword } = await hashPassword(contraseña_nueva);
+
+    usuarioExistente.contraseña = hashedPassword;
+    usuarioExistente.salt = salt;
+    await usuarioExistente.save();
+    res.status(200).json({ message: "Contraseña actualizada con éxito" });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al actualizar la contraseña",
+      error: error.message,
+    });
+  }
+};
+
 
 export const verifyToken = async (req, res) => {
     const { token } = req.cookies

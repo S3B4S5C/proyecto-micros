@@ -4,7 +4,6 @@ import {
   login,
   logout,
   register,
-  registrarTelefono,
   verifyToken,
 } from "./controllers/sesionController.js";
 import usuarioRouter from "./routes/usuarioRoutes.js";
@@ -23,7 +22,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.get("/", (req, res) => {
-  res.send("¡Hola Mundo!");
+  res.send("Hi mom!");
 });
 
 app.use(
@@ -41,10 +40,6 @@ app.use("/usuarios", usuarioRouter);
 app.get("/verify", verifyToken);
 
 app.use("/rutas", rutasRouter);
-
-app.get("/chilito", authRequired, operadorValidation, (req, res) => {
-  res.status(201).json({ message: "ruta protegida" });
-});
 
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
