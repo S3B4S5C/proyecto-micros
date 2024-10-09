@@ -61,10 +61,10 @@ const model = {
 model.usuarios.hasOne(model.choferes, { foreignKey: 'usuario_chofer' })
 model.choferes.belongsTo(model.usuarios, { foreignKey: 'usuario_chofer' })
 
-model.informacionesPersonales.hasOne(model.usuarios, { foreignKey: 'id_informaciones'})
-model.usuarios.belongsTo(model.informacionesPersonales, { foreignKey: 'id_informaciones'})
+model.informacionesPersonales.hasOne(model.usuarios, { foreignKey: 'id_informacion'})
+model.usuarios.belongsTo(model.informacionesPersonales, { foreignKey: 'id_informacion'})
 
-model.informacionesPersonales.hasMany(model.telefono, { foreignKey: 'id_informaciones'})
-model.telefono.belongsTo(model.informacionesPersonales, { foreignKey: 'id_informaciones'})
+model.informacionesPersonales.hasMany(model.telefono, { foreignKey: 'id_informacion'})
+model.telefono.belongsTo(model.informacionesPersonales, { foreignKey: 'id_informacion'})
 
 export default model

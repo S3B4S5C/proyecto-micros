@@ -47,6 +47,9 @@ export const login = async (req, res) => {
     const informacion = await model.informacionesPersonales.findByPk(
       usuarioLogged.id_informacion,
     );
+    console.log(usuarioLogged)
+    console.log(informacion)
+
     if (!usuarioLogged)
       return res.status(404).json({ message: "El usuario no existe" });
 
@@ -77,8 +80,8 @@ export const login = async (req, res) => {
     } else {
       res.status(401).json({ message: "Contraseña incorrecta" });
     }
-  } catch {
-    res.status(500).json({ message: "Error al iniciar sesion" });
+  } catch (error) {
+    res.status(500).json({ message: "Error al iniciar sesion", error: error.message });
   }
 };
 
