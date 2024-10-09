@@ -56,4 +56,15 @@ const model = {
     choferes: choferesModelo(sequelize, DataTypes),
     operadores: operadoresModelo(sequelize, DataTypes)
 }
+
+//El que tiene la llave foranea va con belongsTo
+model.usuarios.hasOne(model.choferes, { foreignKey: 'usuario_chofer' })
+model.choferes.belongsTo(model.usuarios, { foreignKey: 'usuario_chofer' })
+
+model.informacionesPersonales.hasOne(model.usuarios, { foreignKey: 'id_informaciones'})
+model.usuarios.belongsTo(model.informacionesPersonales, { foreignKey: 'id_informaciones'})
+
+model.informacionesPersonales.hasMany(model.telefono, { foreignKey: 'id_informaciones'})
+model.telefono.belongsTo(model.informacionesPersonales, { foreignKey: 'id_informaciones'})
+
 export default model
