@@ -244,6 +244,7 @@ export const getParadas = async (req, res) => {
     for (const parada of paradas) {
       const coordenada = await model.coordenada.findByPk(parada.id_coordenada);
       const obj = {
+        id_parada: parada.id_parada,
         nombre_parada: parada.nombre_parada,
         orden_parada: parada.orden_parada,
         coordenadas: {
@@ -260,7 +261,7 @@ export const getParadas = async (req, res) => {
   } catch (error) {
     res
       .status(400)
-      .json({ message: "Error al obtener rutas", error: error.message });
+      .json({ message: "Error al obtener paradas", error: error.message });
   }
 };
 
