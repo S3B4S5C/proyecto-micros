@@ -15,6 +15,9 @@ import {
 } from "../controllers/routesController.js";
 import { authRequired } from "../middlewares/authRequired.js";
 import { operadorValidation } from "../middlewares/roleValidation.js";
+import { validateSchema } from '../middlewares/validator.middleware.js'
+import { paradaSchema, paradaProvisionalSchema } from '../schemas/route.schema.js';
+
 
 const router = express.Router();
 
@@ -23,11 +26,11 @@ router.post("/lineas/crear", registrarLinea);
 router.post("/lineas", getLineas);
 
 router.post("/crear", authRequired, operadorValidation, crearRuta);
-router.post("/paradas/crear", crearParada);
+router.post("/paradas/crear", validateSchema(paradaSchema),crearParada);
 router.post(
   "/paradas/provisionales/crear",
   authRequired,
-  operadorValidation,
+  operadorValidation,validateSchema(paradaProvisionalSchema),
   crearParadaProvisional,
 );
 router.put(
