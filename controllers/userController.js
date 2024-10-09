@@ -93,9 +93,33 @@ export const crearOperador = async (req, res) => {
 export const getChoferes = async (req, res) => {
   try {
     const choferes = await model.choferes.findAll();
+    let listaDeChoferes = []
+    for(const chofer of choferes) {
+      
+      const usuario = await model.usuarios.findByPk(chofer.usuario_chofer)
+      const informacion = await model.informacionesPersonales.findByPk(usuario.id_informacion)
+      const telefonos = await model.telefono.findAll({
+        where: {
+          id_informacion: usuario.id_informacion
+        }
+      })
+
+      const choferInfo = {
+        usuario: chofer.usuario_chofer,
+        licencia_categoria: chofer.licencia_categoria,
+        nombre: informacion.nombre,
+        apellido: informacion.apellido,
+        correo: informacion.correo,
+        carnet: informacion.carnet,
+        sexo: informacion.sexo,
+        telefonos: telefonos
+      }
+      listaDeChoferes.push(choferInfo)
+    }
+     
     res
       .status(200)
-      .json({ message: "Lista de choferes obtenida con éxito", choferes });
+      .json({ message: "Lista de choferes obtenida con éxito", listaDeChoferes });
   } catch (error) {
     res
       .status(500)
