@@ -99,38 +99,26 @@ export const getChoferes = async (req, res) => {
           include: [
             {
               model: model.informacionesPersonales,
-              include: [{ model: model.telefono }],
+              include: [{ model: model.telefono, attributes: ["telefono"] }],
             },
           ],
         },
       ],
     });
-    return res.status(200).json(choferes)
     let listaDeChoferes = [];
     for (const chofer of choferes) {
-      const usuario = await model.usuarios.findByPk(chofer.usuario_chofer);
-      const informacion = await model.informacionesPersonales.findByPk(
-        usuario.id_informacion,
-      );
-      const telefonos = await model.telefono.findAll({
-        where: {
-          id_informacion: usuario.id_informacion,
-        },
-      });
-
       const choferInfo = {
         usuario: chofer.usuario_chofer,
         licencia_categoria: chofer.licencia_categoria,
-        nombre: informacion.nombre,
-        apellido: informacion.apellido,
-        correo: informacion.correo,
-        carnet: informacion.carnet,
-        sexo: informacion.sexo,
-        telefonos: telefonos,
+        nombre: chofer.usuario.informaciones_personale.nombre,
+        apellido: chofer.usuario.informaciones_personale.apellido,
+        correo: chofer.usuario.informaciones_personale.correo,
+        carnet: chofer.usuario.informaciones_personale.carnet,
+        sexo: chofer.usuario.informaciones_personale.sexo,
+        telefonos: chofer.usuario.informaciones_personale.telefonos,
       };
       listaDeChoferes.push(choferInfo);
     }
-
     res.status(200).json({
       message: "Lista de choferes obtenida con éxito",
       listaDeChoferes,
