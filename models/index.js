@@ -61,10 +61,90 @@ const model = {
 model.usuarios.hasOne(model.choferes, { foreignKey: 'usuario_chofer' })
 model.choferes.belongsTo(model.usuarios, { foreignKey: 'usuario_chofer' })
 
-model.informacionesPersonales.hasOne(model.usuarios, { foreignKey: 'id_informacion'})
-model.usuarios.belongsTo(model.informacionesPersonales, { foreignKey: 'id_informacion'})
+model.usuarios.hasOne(model.operadores, { foreignKey: 'usuario_operador' })
+model.operadores.belongsTo(model.usuarios, { foreignKey: 'usuario_operador' })
 
-model.informacionesPersonales.hasMany(model.telefono, { foreignKey: 'id_informacion'})
-model.telefono.belongsTo(model.informacionesPersonales, { foreignKey: 'id_informacion'})
+model.informacionesPersonales.hasOne(model.usuarios, { foreignKey: 'id_informaciones'})
+model.usuarios.belongsTo(model.informacionesPersonales, { foreignKey: 'id_informaciones'})
+
+model.informacionesPersonales.hasMany(model.telefono, { foreignKey: 'id_informaciones'})
+model.telefono.belongsTo(model.informacionesPersonales, { foreignKey: 'id_informaciones'})
+
+model.informacionesPersonales.hasOne(model.dueño, { foreignKey: 'id_informaciones'})
+model.dueño.belongsTo(model.informacionesPersonales, { foreignKey: 'id_informaciones'})
+
+model.dueño.hasMany(model.micro, { foreignKey: 'id_dueño'})
+model.micro.belongsTo(model.dueño, { foreignKey: 'id_dueño'})
+
+model.micro.hasMany(model.revisionTecnica, { foreignKey: 'id_micro'})
+model.revisionTecnica.belongsTo(model.micro, { foreignKey: 'id_micro'})
+
+model.micro.hasMany(model.estado, { foreignKey: 'id_micro'})
+model.estado.belongsTo(model.micro, { foreignKey: 'id_micro'})
+
+model.micro.belognsToMany(model.choferes, { through: turno , foreignKey: 'id_micro'})
+model.choferes.belongsToMany(model.micro, { through: turno , foreignKey:  'usuario_chofer'})
+
+model.turno.hasOne(model.incidente, { foreignKey: ['usuario_chofer', 'id_micro']})
+model.incidente.belongsTo(model.turno, { foreignKey: ['usuario_chofer', 'id_micro']})
+
+model.horario.hasOne(model.turno, { foreignKey: 'id_horario'})
+model.turno.belongsTo(model.horario, { foreignKey: 'id_horario'})
+
+model.operadores.hasMany(model.incidente, {foreignKey: 'usuario_operador'})
+model.incidente.belongsTo(model.operadores, { foreignKey: 'usuario_operador' })
+
+model.operadores.hasMany(model.fichaSancion, {foreignKey: 'usuario_operador'})
+model.fichaSancion.belongsTo(model.operadores, { foreignKey: 'usuario_operador' })
+
+model.choferes.hasMany(model.fichaSancion, {foreignKey: 'usuario_chofer'})
+model.fichaSancion.belongsTo(model.choferes, { foreignKey: 'usuario_chofer' })
+
+model.sancion.hasMany(model.fichaSancion, {foreignKey: 'id_sancion'})
+model.fichaSancion.belongsTo(model.sancion, { foreignKey: 'id_sancion' })
+
+model.operadores.hasMany(model.notificacion, {foreignKey: 'usuario_operador'})
+model.notificacion.belongsTo(model.operadores, { foreignKey: 'usuario_operador' })
+
+model.usuarios.hasMany(model.comentario, { foreignKey: 'usuario'})
+model.comentario.belongsTo(model.usuarios, { foreignKey: 'usuario'})
+
+model.linea.hasMany(model.comentario, { foreignKey: 'id_linea'})
+model.comentario.belongsTo(model.linea, { foreignKey: 'id_linea'})
+
+model.sindicato.hasMany(model.linea, { foreignKey: 'id_sindicato'})
+model.linea.belongsTo(model.sindicato, { foreignKey: 'id_sindicato'})
+
+model.micro.belognsToMany(model.linea, { through: trabajan , foreignKey: 'id_micro'})
+model.linea.belongsToMany(model.micro, { through: trabajan , foreignKey:  'id_linea'})
+
+model.micro.hasMany(model.mantenimiento, { foreignKey: 'id_micro'})
+model.mantenimiento.belongsTo(model.micro, { foreignKey: 'id_micro'})
+
+model.linea.hasMany(model.ruta, { foreignKey: 'id_linea'})
+model.ruta.belongsTo(model.linea, { foreignKey: 'id_linea'})
+
+model.ruta.hasMany(model.parada, { foreignKey: 'id_ruta'})
+model.parada.belongsTo(model.ruta, { foreignKey: 'id_ruta'})
+
+model.coordenada.hasMany(model.parada, { foreignKey: 'id_coordenada'})
+model.parada.belongsTo(model.coordenada, { foreignKey: 'id_coordenada'})
+
+model.coordenada.hasMany(model.paradaProvisional, { foreignKey: 'id_coordenada'})
+model.paradaProvisional.belongsTo(model.coordenada, { foreignKey: 'id_coordenada'})
+
+model.parada.hasMany(model.paradaProvisional, { foreignKey: 'id_parada'})
+model.paradaProvisional.belongsTo(model.parada, { foreignKey: 'id_parada'})
+
+model.paradaProvisional.hasMany(model.paradaProvisional, { foreignKey: 'id_parada_provisional', as: 'subParadasProvisionales' });
+
+model.paradaProvisional.belongsTo(model.paradaProvisional, { foreignKey: 'id_parada_provisional', as: 'paradaProvisionalPadre' });
+
+model.usuarios.hasMany(model.mensaje, { foreignKey: 'usuario_emisor', as: 'mensajesEnviados' });
+model.mensaje.belongsTo(model.usuarios, { foreignKey: 'usuario_emisor', as: 'emisor' });
+
+model.usuarios.hasMany(model.mensaje, { foreignKey: 'usuario_receptor', as: 'mensajesRecibidos'  });
+model.mensaje.belongsTo(model.usuarios, { foreignKey: 'usuario_receptor', as: 'receptor' });
+
 
 export default model

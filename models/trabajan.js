@@ -1,5 +1,5 @@
 const trabajanModelo = (sequelize, DataTypes) => {
-const trabajan= sequelize.define(
+const trabajan = sequelize.define(
   'trabajan',
   {
     // Model attributes are defined here

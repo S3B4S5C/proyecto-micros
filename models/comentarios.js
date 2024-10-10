@@ -1,5 +1,5 @@
 const comentariosModelo = (sequelize, DataTypes) => {
-const comentario= sequelize.define(
+const comentario = sequelize.define(
   'comentarios',
   {
     // Model attributes are defined here
@@ -36,7 +36,7 @@ const comentario= sequelize.define(
         allowNull:false,
         references: {
             model: 'usuarios',
-            key: 'id_linea'
+            key: 'usuario'
         }
     },
     id_linea: {
