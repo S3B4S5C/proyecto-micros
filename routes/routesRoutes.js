@@ -39,7 +39,7 @@ router.put(
   operadorValidation,
   deshabilitarParadaProvisional,
 );
-router.delete(
+router.post(
   "/paradas/eliminar/:id",
   authRequired,
   operadorValidation,
