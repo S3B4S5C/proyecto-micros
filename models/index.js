@@ -67,24 +67,24 @@ model.usuarios.hasOne(model.operadores, { foreignKey: "usuario_operador" });
 model.operadores.belongsTo(model.usuarios, { foreignKey: "usuario_operador" });
 
 model.informacionesPersonales.hasOne(model.usuarios, {
-  foreignKey: "id_informaciones",
+  foreignKey: "id_informacion",
 });
 model.usuarios.belongsTo(model.informacionesPersonales, {
-  foreignKey: "id_informaciones",
+  foreignKey: "id_informacion",
 });
 
 model.informacionesPersonales.hasMany(model.telefono, {
-  foreignKey: "id_informaciones",
+  foreignKey: "id_informacion",
 });
 model.telefono.belongsTo(model.informacionesPersonales, {
-  foreignKey: "id_informaciones",
+  foreignKey: "id_informacion",
 });
 
 model.informacionesPersonales.hasOne(model.dueño, {
-  foreignKey: "id_informaciones",
+  foreignKey: "id_informacion",
 });
 model.dueño.belongsTo(model.informacionesPersonales, {
-  foreignKey: "id_informaciones",
+  foreignKey: "id_informacion",
 });
 
 /*
