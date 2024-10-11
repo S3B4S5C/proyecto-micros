@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: ["http://localhost:5173", "http://localhost:5174", "https://7q577mvq-5173.brs.devtunnels.ms"],
     credentials: true,
   }),
 );
