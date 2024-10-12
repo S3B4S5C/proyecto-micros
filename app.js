@@ -35,9 +35,9 @@ app.use(
 app.post("/login", validateSchema(loginSchema), login);
 app.post("/register", validateSchema(registerSchema), register);
 app.post("/logout", logout);
+app.get("/verify", verifyToken);
 
 app.use("/usuarios", usuarioRouter);
-app.get("/verify", verifyToken);
 
 app.use("/rutas", rutasRouter);
 
