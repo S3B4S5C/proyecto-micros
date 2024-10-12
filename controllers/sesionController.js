@@ -41,14 +41,12 @@ const buscarRol = async (usuario) => {
 };
 
 export const login = async (req, res) => {
-  const { usuario, contraseña } = req.body;
+  const { usuario, contraseña } = req.body; 
   try {
     const usuarioLogged = await model.usuarios.findByPk(usuario);
     const informacion = await model.informacionesPersonales.findByPk(
       usuarioLogged.id_informacion,
     );
-    console.log(usuarioLogged)
-    console.log(informacion)
 
     if (!usuarioLogged)
       return res.status(404).json({ message: "El usuario no existe" });
