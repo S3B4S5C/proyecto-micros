@@ -54,12 +54,12 @@ export const login = async (req, res) => {
     if (await comparePassword(contraseña, usuarioLogged.contraseña)) {
       const rol = await buscarRol(usuario);
       const token = await generateToken(usuario, rol);
-
+      var farFuture = new Date(new Date().getTime() + (1000*60*60*24*365*10));
       res.cookie("token", token, {
         httpOnly: true, // Protege la cookie para que no pueda ser accedida por JavaScript en el navegador
         secure: false, // Solo en HTTPS en producción
         sameSite: "none", // Evita el envío de la cookie en solicitudes entre sitios (para mayor seguridad)
-        maxAge: 24 * 60 * 60 * 1000, // Expira en 1 día (en milisegundos)
+        expires: farFuture 
       });
       res.status(200).json({
         message: "Inicio de sesión exitoso",
