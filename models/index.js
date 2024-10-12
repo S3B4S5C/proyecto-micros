@@ -87,7 +87,6 @@ model.dueño.belongsTo(model.informacionesPersonales, {
   foreignKey: "id_informacion",
 });
 
-/*
 model.dueño.hasMany(model.micro, { foreignKey: "id_dueño" });
 model.micro.belongsTo(model.dueño, { foreignKey: "id_dueño" });
 
@@ -212,5 +211,5 @@ model.mensaje.belongsTo(model.usuarios, {
   foreignKey: "usuario_receptor",
   as: "receptor",
 });
-*/
+
 export default model;
