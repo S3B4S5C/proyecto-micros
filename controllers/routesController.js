@@ -36,6 +36,11 @@ export const registrarSindicato = async (req, res) => {
         .json({ message: "El nombre de sindicato ya está en uso" });
     }
     await model.sindicato.create({ nombre });
+    registrarBitacora(
+      usuario,
+      "CREACION",
+      `Sindicato ${nombre} se ha creado con éxito`,
+    );
     res
       .status(201)
       .json({ message: "Sindicato registrado con éxito", sindicato: nombre });
@@ -64,6 +69,11 @@ export const registrarLinea = async (req, res) => {
       nombre_linea: nombre,
       id_sindicato: sindicatoEncontrado.id_sindicato,
     });
+    registrarBitacora(
+      usuario,
+      "CREACION",
+      `Linea ${nombre_linea} se ha creado con éxito`,
+    );
     res
       .status(201)
       .json({ message: "Linea registrada con éxito", user: nombre });
@@ -78,6 +88,11 @@ export const crearRuta = async (req, res) => {
   const { id_linea } = req.body;
   try {
     const rutaNueva = await model.ruta.create({ id_linea });
+    registrarBitacora(
+      usuario,
+      "CREACION",
+      `Ruta ${rutaNueva} se ha creado con éxito`,
+    );
     res
       .status(201)
       .json({ message: "Ruta registrada con éxito", ruta: rutaNueva });
@@ -101,6 +116,11 @@ export const crearParada = async (req, res) => {
       id_ruta: ruta,
       id_coordenada: coordenada,
     });
+    registrarBitacora(
+      usuario,
+      "CREACION",
+      `Parada ${nombre_parada} se ha creado con éxito`,
+    );
     res
       .status(201)
       .json({ message: "Parada registrada con éxito", parada: paradaNueva });
@@ -133,6 +153,11 @@ export const crearParadaProvisional = async (req, res) => {
       id_coordenada: coordenada,
       id_parada_provisional,
     });
+    registrarBitacora(
+      usuario,
+      "CREACION",
+      `Parada provisional ${paradaProvisionalNueva} se ha creado con éxito`,
+    );
     res
       .status(201)
       .json({
@@ -163,6 +188,11 @@ export const deshabilitarParadaProvisional = async (req, res) => {
     }
     paradaProvisional.fecha_fin = fecha_fin;
     await paradaProvisional.save();
+    registrarBitacora(
+      usuario,
+      "ELIMINACION",
+      `Parada provisonal ${paradaProvisional} se ha eliminado con éxito`,
+    );
     res
       .status(200)
       .json({
@@ -191,6 +221,11 @@ export const eliminarParada = async (req, res) => {
     if (coordenada) {
       await coordenada.destroy({});
     }
+    registrarBitacora(
+      usuario,
+      "CREACION",
+      `Parada ${parada} se ha eliminado con éxito`,
+    );
     res.status(200).json({ message: "Parada eliminada con éxito" });
   } catch (error) {
     res

@@ -61,6 +61,11 @@ export const login = async (req, res) => {
         sameSite: "none", // Evita el envío de la cookie en solicitudes entre sitios (para mayor seguridad)
         expires: farFuture 
       });
+      registrarBitacora(
+        usuario,
+        "INICIO DE SESION",
+        `Usuario ${usuario} ha iniciado sesión`,
+      );
       res.status(200).json({
         message: "Inicio de sesión exitoso",
         token: token,
@@ -179,6 +184,11 @@ export const register = async (req, res) => {
       sameSite: "None", // Evita el envío de la cookie en solicitudes entre sitios (para mayor seguridad)
       maxAge: 24 * 60 * 60 * 1000, // Expira en 1 día (en milisegundos)
     });
+    registrarBitacora(
+      usuario,
+      "CREACION",
+      `Usuario ${usuario} registrado con éxito`,
+    );
     res.status(201).json({
       message: "Usuario registrado con éxito",
       token: token,
@@ -226,6 +236,11 @@ export const updateContraseña = async (req, res) => {
     usuarioExistente.contraseña = hashedPassword;
     usuarioExistente.salt = salt;
     await usuarioExistente.save();
+    registrarBitacora(
+      usuario,
+      "ACTUALIZACION",
+      `Usuario ${usuario} a actualizado la contraseña con éxito`,
+    );
     res.status(200).json({ message: "Contraseña actualizada con éxito" });
   } catch (error) {
     res.status(500).json({
