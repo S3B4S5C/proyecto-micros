@@ -1,5 +1,6 @@
 import model from "../models/index.js";
 import { CODIGO_OPERADOR, TOKEN_KEY } from "../config.js";
+import { registrarBitacora } from "../services/bitacora.js";
 
 const existeUsuario = async (usuario) => {
   const UsuarioExistente = await model.usuarios.findByPk(usuario);
@@ -26,6 +27,13 @@ export const updateUsuario = async (req, res) => {
       });
       const idInfo =
         await model.informacionesPersonales.findByPk(idInformacion);
+
+      registrarBitacora(
+        usuario,
+        "ACTUALIZACION",
+        `El usuario ${usuario} ha sido actualizado`,
+      );
+
       res.status(201).json({
         datos: {
           usuario: usuario,
@@ -57,6 +65,11 @@ export const crearChofer = async (req, res) => {
         usuario_chofer: usuario,
         licencia_categoria: licencia,
       });
+      registrarBitacora(
+        usuario,
+        "ACTUALIZACION",
+        `Al usuario ${usuario} se le ha asignado el rol de chofer`,
+      );
       res.status(201).json({ message: "Chofer creado con exito" });
     } else {
       res.status(404).json({ message: "Usuario no encontrado" });
@@ -74,6 +87,11 @@ export const crearOperador = async (req, res) => {
     try {
       if (existeUsuario(usuario)) {
         await model.operadores.create({ usuario_operador: usuario, id_linea });
+        registrarBitacora(
+          usuario,
+          "ACTUALIZACION",
+          `Al usuario ${usuario} se le ha asignado el rol de operador`,
+        );
         res.status(201).json({ message: "Operador creado con exito" });
       } else {
         res.status(404).json({ message: "Usuario no encontrado" });
@@ -220,6 +238,11 @@ export const eliminarChofer = async (req, res) => {
     });
     if (chofer) {
       await model.choferes.destroy({ where: { usuario_chofer: usuario } });
+      registrarBitacora(
+        usuario,
+        "ACTUALIZACION",
+        `Al usuario ${usuario} se le ha quitado el rol de chofer`,
+      );
       res.status(200).json({ message: "Rol de chofer eliminado con éxito" });
     } else {
       res

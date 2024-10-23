@@ -25,6 +25,7 @@ import dotenv from "dotenv";
 import choferesModelo from "./choferes.js";
 import operadoresModelo from "./operadores.js";
 import comentariosModelo from "./comentarios.js";
+import bitacorasModelo from "./bitacoras.js";
 
 dotenv.config();
 
@@ -57,6 +58,7 @@ const model = {
   choferes: choferesModelo(sequelize, DataTypes),
   operadores: operadoresModelo(sequelize, DataTypes),
   comentario: comentariosModelo(sequelize, DataTypes),
+  bitacora: bitacorasModelo(sequelize, DataTypes),
 };
 
 //El que tiene la llave foranea va con belongsTo
@@ -211,5 +213,8 @@ model.mensaje.belongsTo(model.usuarios, {
   foreignKey: "usuario_receptor",
   as: "receptor",
 });
+
+model.usuarios.hasMany(model.bitacora, { foreignKey: "usuario_bitacora" });
+model.bitacora.belongsTo(model.usuarios, { foreignKey: "usuario_bitacora" });
 
 export default model;
