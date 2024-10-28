@@ -297,16 +297,16 @@ export const eliminarDueño = async(res, req) =>{
     });
     if(!dueño){
       return res.status(404).json({ message: "El usuario no es dueño actualmente"});
-      await dueño.destroy();
     }
+    await dueño.destroy();
     registrarBitacora(
       usuario,
       "ELIMINACION",
       `El usuario ${usuario} ha dejado de ser dueño`
     );
-    res.status(200).json({ message: "Rol de dueño eliminado con éxito" });
+    res.status(200).json({ message: "Dueño eliminado con éxito" });
   }catch(error){
-    res.status(500).json({ message: "Error al eliminar el rol de dueño", error: error.message });
+    res.status(500).json({ message: "Error al eliminar el dueño", error: error.message });
   
   }
 }
