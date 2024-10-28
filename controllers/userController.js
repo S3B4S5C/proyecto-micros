@@ -108,6 +108,31 @@ export const crearOperador = async (req, res) => {
   }
 };
 
+export const crearDueño = async(res, req) => {
+  const { usuario } = req.body;
+  try{
+    if (existeUsuario(usuario)) {
+      const usuarioExistente = await model.usuarios.findByPk(usuario);
+      const id_informacion = usuarioExistente.id_informacion;
+      await model.dueños.create({
+        id_informacion,
+      })
+      registrarBitacora(
+        usuario,
+        "ACTUALIZACION",
+        `El usuario ${usuario} se ha actualizado a dueño de micro`,
+      );
+      res.status(201).json({ message: "Dueño creado con exito" });
+    } else {
+      res.status(404).json({ message: "Usuario no encontrado" });
+    }
+  }catch(error){
+    res
+      .status(500)
+      .json({ message: "Error al crear Dueño", error: error.message });
+  }
+}
+
 export const getChoferes = async (req, res) => {
   try {
     const choferes = await model.choferes.findAll({
@@ -230,6 +255,7 @@ export const getUsuario = async (req, res) => {
   }
 };
 
+
 export const eliminarChofer = async (req, res) => {
   const { usuario } = req.params;
   try {
@@ -256,3 +282,31 @@ export const eliminarChofer = async (req, res) => {
     });
   }
 };
+
+
+
+export const eliminarDueño = async(res, req) =>{
+  const { usuario } = req.params;
+  try{
+    const informacionPersonal = await model.informacionesPersonales.findOne({ where: { usuario }});
+    if ( !informacionPersonal){
+      return res.status(404).json({ message: "Usuario no encontrado"});
+    }
+    const dueño = await model.dueño.findOne({
+      where: { id_informacion: informacionPersonal.id_informacion}
+    });
+    if(!dueño){
+      return res.status(404).json({ message: "El usuario no es dueño actualmente"});
+      await dueño.destroy();
+    }
+    registrarBitacora(
+      usuario,
+      "ELIMINACION",
+      `El usuario ${usuario} ha dejado de ser dueño`
+    );
+    res.status(200).json({ message: "Rol de dueño eliminado con éxito" });
+  }catch(error){
+    res.status(500).json({ message: "Error al eliminar el rol de dueño", error: error.message });
+  
+  }
+}

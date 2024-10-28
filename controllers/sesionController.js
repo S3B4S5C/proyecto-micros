@@ -7,6 +7,8 @@ import {
 } from "../services/auth.js";
 import jwt from "jsonwebtoken";
 import { TOKEN_KEY } from "../config.js";
+import { registrarBitacora } from "../services/bitacora.js";
+import { where } from "sequelize";
 
 const existeTelefono = async (telefono) => {
   const telefonoExistente = await model.telefono.findOne({
@@ -14,6 +16,13 @@ const existeTelefono = async (telefono) => {
   });
   return telefonoExistente !== null;
 };
+
+const existeCarnet = async (carnet) => {
+  const carnetExistente = await model.informacionesPersonales.findOne({
+    where : { carnet },
+  })
+  return  carnetExistente !==  null;
+}
 
 const existeCorreo = async (correo) => {
   const UsuarioExistente = await model.informacionesPersonales.findOne({
@@ -263,3 +272,4 @@ export const verifyToken = async (req, res) => {
     });
   });
 };
+

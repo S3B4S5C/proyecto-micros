@@ -1,5 +1,6 @@
 import { uuid } from "uuidv4";
 import model from "../models/index.js";
+import { registrarBitacora } from "../services/bitacora.js";
 
 const existeSindicato = async (sindicato) => {
   const SindicatoExistente = await model.sindicato.findOne({
@@ -37,7 +38,7 @@ export const registrarSindicato = async (req, res) => {
     }
     await model.sindicato.create({ nombre });
     registrarBitacora(
-      usuario,
+      "ADMINISTRADOR",
       "CREACION",
       `Sindicato ${nombre} se ha creado con éxito`,
     );
@@ -70,7 +71,7 @@ export const registrarLinea = async (req, res) => {
       id_sindicato: sindicatoEncontrado.id_sindicato,
     });
     registrarBitacora(
-      usuario,
+      "ADMINISTRADOR",
       "CREACION",
       `Linea ${nombre_linea} se ha creado con éxito`,
     );
@@ -89,7 +90,7 @@ export const crearRuta = async (req, res) => {
   try {
     const rutaNueva = await model.ruta.create({ id_linea });
     registrarBitacora(
-      usuario,
+      "ADMINISTRADOR",
       "CREACION",
       `Ruta ${rutaNueva} se ha creado con éxito`,
     );
@@ -104,7 +105,7 @@ export const crearRuta = async (req, res) => {
 };
 
 export const crearParada = async (req, res) => {
-  const { nombre, orden, ruta, latitud, longitud } = req.body;
+  const { nombre, orden, ruta, latitud, longitud, token } = req.body;
   const id_parada = uuid();
   const coordenada = uuid();
   try {
@@ -117,7 +118,7 @@ export const crearParada = async (req, res) => {
       id_coordenada: coordenada,
     });
     registrarBitacora(
-      usuario,
+      token.id,
       "CREACION",
       `Parada ${nombre_parada} se ha creado con éxito`,
     );
@@ -129,7 +130,7 @@ export const crearParada = async (req, res) => {
     res
       .status(500)
       .json({ message: "Error al registrar la parada", error: error.message });
-  }
+    }
 };
 
 export const crearParadaProvisional = async (req, res) => {
@@ -140,6 +141,7 @@ export const crearParadaProvisional = async (req, res) => {
     latitud,
     longitud,
     id_parada_provisional,
+    token
   } = req.body;
   const id_provisional = uuid();
   const coordenada = uuid();
@@ -154,7 +156,7 @@ export const crearParadaProvisional = async (req, res) => {
       id_parada_provisional,
     });
     registrarBitacora(
-      usuario,
+      token.id,
       "CREACION",
       `Parada provisional ${paradaProvisionalNueva} se ha creado con éxito`,
     );
@@ -176,6 +178,7 @@ export const crearParadaProvisional = async (req, res) => {
 };
 
 export const deshabilitarParadaProvisional = async (req, res) => {
+  const { token } = req.body;
   const { id } = req.params;
   const fecha_fin = Date.now();
   console.log(fecha_fin);
@@ -189,7 +192,7 @@ export const deshabilitarParadaProvisional = async (req, res) => {
     paradaProvisional.fecha_fin = fecha_fin;
     await paradaProvisional.save();
     registrarBitacora(
-      usuario,
+      token.id,
       "ELIMINACION",
       `Parada provisonal ${paradaProvisional} se ha eliminado con éxito`,
     );
@@ -210,6 +213,7 @@ export const deshabilitarParadaProvisional = async (req, res) => {
 };
 
 export const eliminarParada = async (req, res) => {
+  const { token } = req.body;
   const { id } = req.params;
   try {
     const parada = await model.parada.findByPk(id);
@@ -219,11 +223,11 @@ export const eliminarParada = async (req, res) => {
     const coordenada = await model.coordenada.findByPk(parada.id_coordenada);
     await parada.destroy();
     if (coordenada) {
-      await coordenada.destroy({});
+      await coordenada.destroy();
     }
     registrarBitacora(
-      usuario,
-      "CREACION",
+      token.id,
+      "ELIMINACION",
       `Parada ${parada} se ha eliminado con éxito`,
     );
     res.status(200).json({ message: "Parada eliminada con éxito" });
