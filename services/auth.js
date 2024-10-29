@@ -26,3 +26,12 @@ export const generateToken = async (id, role) => {
   );
   return token;
 };
+
+export const userFromToken = (token) => {
+  let user;
+    jwt.verify(token, TOKEN_KEY, (err, id, role) => {
+      if (err) return console.error("token invalido");
+      user = id.id
+    });
+    return user
+};

@@ -108,17 +108,35 @@ model.choferes.belongsToMany(model.micro, {
 });
 
 model.turno.hasOne(model.incidente, {
-  foreignKey: ["usuario_chofer", "id_micro"],
+  foreignKey: "id_turno",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 model.incidente.belongsTo(model.turno, {
-  foreignKey: ["usuario_chofer", "id_micro"],
+  foreignKey: "id_turno",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 
-model.horario.hasOne(model.turno, { foreignKey: "id_horario" });
-model.turno.belongsTo(model.horario, { foreignKey: "id_horario" });
+model.horario.hasOne(model.turno, {
+  foreignKey: "id_horario",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+model.turno.belongsTo(model.horario, {
+  foreignKey: "id_horario",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
 
 model.operadores.hasMany(model.incidente, { foreignKey: "usuario_operador" });
 model.incidente.belongsTo(model.operadores, { foreignKey: "usuario_operador" });
+
+model.operadores.hasMany(model.horario, { foreignKey: "usuario_operador" });
+model.horario.belongsTo(model.operadores, { foreignKey: "usuario_operador" });
+
+model.operadores.belongsTo(model.linea, { foreignKey: "id_linea" });
+model.linea.hasMany(model.operadores, { foreignKey: "id_linea" });
 
 model.operadores.hasMany(model.fichaSancion, {
   foreignKey: "usuario_operador",

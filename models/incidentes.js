@@ -25,14 +25,14 @@ const incidente = sequelize.define(
         type: DataTypes.STRING(64),
         allowNull: false
     },
-    usuario_chofer: {
-        type: DataTypes.STRING(255),
-        allowNull: false
-    },
-    id_micro: {
-        type: DataTypes.BIGINT,
-        allowNull: false
-    },
+    id_turno: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: "turno",
+        key: "id_turno",
+      },
+    }
   },
   {
     tableName: 'incidentes',
