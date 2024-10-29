@@ -1,5 +1,5 @@
 import express from 'express'
-import {designarTurno, registrarMicro, eliminarMicro, eliminarTurno} from '../controllers/microsController';
+import { registrarMicro, eliminarMicro, setEstado, getMicrosPorLineaConEstado} from '../controllers/microsController.js';
 import { validateSchema } from '../middlewares/validator.middleware.js'
 import { authRequired } from '../middlewares/authRequired.js'
 import { operadorValidation } from '../middlewares/roleValidation.js'
@@ -7,11 +7,11 @@ import {microSchema, horarioSchema} from '../schemas/micro.schema.js'
 
 const router = express.Router();
 
-router.post("/turno/crear", validateSchema(microSchema), authRequired, operadorValidation, designarTurno);
-router.post("/micros/crear", validateSchema(horarioSchema),  authRequired, operadorValidation,registrarMicro);
+router.post("/crear",  authRequired, operadorValidation,registrarMicro);
 
-router.post("/micros/eliminar/:id", 
+router.post("/eliminar/:id", 
    authRequired, operadorValidation, eliminarMicro);
-router.post("/turno/eliminar/:id", authRequired, operadorValidation, eliminarTurno)
 
+router.post("/agregarEstado", authRequired, operadorValidation, setEstado)
+router.post("/", authRequired, operadorValidation, getMicrosPorLineaConEstado)
 export default router;

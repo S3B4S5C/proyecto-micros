@@ -3,7 +3,7 @@ const trabajan = sequelize.define(
   'trabajan',
   {
     // Model attributes are defined here
-    id_lineas: {
+    id_linea: {
       type: DataTypes.BIGINT,
       primaryKey: true,
       allowNull: false,
