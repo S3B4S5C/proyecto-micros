@@ -36,7 +36,15 @@ const micro = sequelize.define(
          model: 'dueños',
          key: 'id_dueño'
         }
-     }
+     },
+     id_linea: {
+      type: DataTypes.BIGINT,
+      allowNull: false, 
+      references: {
+       model: 'lineas',
+       key: 'id_linea'
+      }
+   }
   },
   {
     tableName: 'micros',

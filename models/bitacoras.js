@@ -31,7 +31,15 @@ const bitacorasModelo = (sequelize, DataTypes) => {
       hora: {
         type: DataTypes.TIME,
         allowNull: false,
-      }
+      },
+      id_linea: {
+        type: DataTypes.BIGINT,
+        allowNull: false,
+        references: {
+          model: "lineas",
+          key: "id_linea",
+        },
+      },
     },
     {
       freezeTableName: true,

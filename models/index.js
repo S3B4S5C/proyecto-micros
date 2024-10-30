@@ -20,7 +20,6 @@ import rutasModelo from "./rutas.js";
 import sancionesModelo from "./sanciones.js";
 import sindicatosModelo from "./sindicatos.js";
 import telefonosModelo from "./telefonos.js";
-import trabajanModelo from "./trabajan.js";
 import dotenv from "dotenv";
 import choferesModelo from "./choferes.js";
 import operadoresModelo from "./operadores.js";
@@ -54,7 +53,6 @@ const model = {
   sancion: sancionesModelo(sequelize, DataTypes),
   sindicato: sindicatosModelo(sequelize, DataTypes),
   telefono: telefonosModelo(sequelize, DataTypes),
-  trabajan: trabajanModelo(sequelize, DataTypes),
   choferes: choferesModelo(sequelize, DataTypes),
   operadores: operadoresModelo(sequelize, DataTypes),
   comentario: comentariosModelo(sequelize, DataTypes),
@@ -173,12 +171,8 @@ model.comentario.belongsTo(model.linea, { foreignKey: "id_linea" });
 model.sindicato.hasMany(model.linea, { foreignKey: "id_sindicato" });
 model.linea.belongsTo(model.sindicato, { foreignKey: "id_sindicato" });
 
-
-model.micro.hasMany(model.trabajan, { foreignKey: 'id_micro' });
-model.trabajan.belongsTo(model.micro, { foreignKey: 'id_micro' });
-
-model.linea.hasMany(model.trabajan, { foreignKey: 'id_linea' });
-model.trabajan.belongsTo(model.linea, { foreignKey: 'id_linea' });
+model.linea.hasMany(model.micro, { foreignKey: 'id_linea' });
+model.micro.belongsTo(model.linea, { foreignKey: 'id_linea' });
 
 model.micro.hasMany(model.mantenimiento, { foreignKey: "id_micro" });
 model.mantenimiento.belongsTo(model.micro, { foreignKey: "id_micro" });

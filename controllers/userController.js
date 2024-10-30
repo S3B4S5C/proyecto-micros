@@ -1,7 +1,7 @@
 import model from "../models/index.js";
 import { CODIGO_OPERADOR, TOKEN_KEY } from "../config.js";
 import { registrarBitacora } from "../services/bitacora.js";
-
+import { userFromToken } from "../services/auth.js";
 const existeUsuario = async (usuario) => {
   const UsuarioExistente = await model.usuarios.findByPk(usuario);
   return UsuarioExistente !== null;
@@ -108,15 +108,15 @@ export const crearOperador = async (req, res) => {
   }
 };
 
-export const crearDueño = async(res, req) => {
+export const crearDueño = async (res, req) => {
   const { usuario } = req.body;
-  try{
+  try {
     if (existeUsuario(usuario)) {
       const usuarioExistente = await model.usuarios.findByPk(usuario);
       const id_informacion = usuarioExistente.id_informacion;
       await model.dueños.create({
         id_informacion,
-      })
+      });
       registrarBitacora(
         usuario,
         "ACTUALIZACION",
@@ -126,17 +126,31 @@ export const crearDueño = async(res, req) => {
     } else {
       res.status(404).json({ message: "Usuario no encontrado" });
     }
-  }catch(error){
+  } catch (error) {
     res
       .status(500)
       .json({ message: "Error al crear Dueño", error: error.message });
   }
-}
+};
 
 export const getChoferes = async (req, res) => {
+  const { token } = req.body;
+  const user = userFromToken(token);
   try {
+    const operador = await model.operadores.findByPk(user);
     const choferes = await model.choferes.findAll({
       include: [
+        {
+          model: model.micro,
+          required: true,
+          include: [
+            {
+              model: model.linea,
+              required: true,
+              where: { id_linea: operador.id_linea },
+            },
+          ],
+        },
         {
           model: model.usuarios,
           include: [
@@ -255,7 +269,6 @@ export const getUsuario = async (req, res) => {
   }
 };
 
-
 export const eliminarChofer = async (req, res) => {
   const { usuario } = req.params;
   try {
@@ -283,30 +296,50 @@ export const eliminarChofer = async (req, res) => {
   }
 };
 
-
-
-export const eliminarDueño = async(res, req) =>{
-  const { usuario } = req.params;
-  try{
-    const informacionPersonal = await model.informacionesPersonales.findOne({ where: { usuario }});
-    if ( !informacionPersonal){
-      return res.status(404).json({ message: "Usuario no encontrado"});
+export const eliminarDueño = async (res, req) => {
+  const { usuario, token } = req.body;
+  const id_linea = idLineaFromToken(token);
+  try {
+    const informacionPersonal = await model.informacionesPersonales.findOne({
+      where: { usuario },
+    });
+    if (!informacionPersonal) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
     const dueño = await model.dueño.findOne({
-      where: { id_informacion: informacionPersonal.id_informacion}
+      where: { id_informacion: informacionPersonal.id_informacion },
     });
-    if(!dueño){
-      return res.status(404).json({ message: "El usuario no es dueño actualmente"});
+    if (!dueño) {
+      return res
+        .status(404)
+        .json({ message: "El usuario no es dueño actualmente" });
     }
     await dueño.destroy();
     registrarBitacora(
       usuario,
       "ELIMINACION",
-      `El usuario ${usuario} ha dejado de ser dueño`
+      `El usuario ${usuario} ha dejado de ser dueño`,
+      id_linea
     );
     res.status(200).json({ message: "Dueño eliminado con éxito" });
-  }catch(error){
-    res.status(500).json({ message: "Error al eliminar el dueño", error: error.message });
-  
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error al eliminar el dueño", error: error.message });
   }
-}
+};
+
+export const getBitacora = async (req, res) => {
+  try {
+    const bitacora = await model.bitacora.findAll({
+      include: [
+        
+      ]
+    });
+    res.status(200).json(bitacora);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error al obtener la bitacora", error: error.message });
+  }
+};

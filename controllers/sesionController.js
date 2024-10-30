@@ -51,18 +51,22 @@ const buscarRol = async (usuario) => {
 
 export const login = async (req, res) => {
   const { usuario, contraseña } = req.body; 
+  let id_linea = -1
   try {
     const usuarioLogged = await model.usuarios.findByPk(usuario);
     const informacion = await model.informacionesPersonales.findByPk(
       usuarioLogged.id_informacion,
     );
-
     if (!usuarioLogged)
       return res.status(404).json({ message: "El usuario no existe" });
 
     if (await comparePassword(contraseña, usuarioLogged.contraseña)) {
       const rol = await buscarRol(usuario);
-      const token = await generateToken(usuario, rol);
+      if (rol === "Operador") {
+        const op = await model.operadores.findOne({ where: { usuario_operador: usuario } })
+        id_linea = op.id_linea
+      }
+      const token = generateToken(usuario, rol, id_linea);
       var farFuture = new Date(new Date().getTime() + (1000*60*60*24*365*10));
       res.cookie("token", token, {
         httpOnly: true, // Protege la cookie para que no pueda ser accedida por JavaScript en el navegador
@@ -74,6 +78,7 @@ export const login = async (req, res) => {
         usuario,
         "INICIO DE SESION",
         `Usuario ${usuario} ha iniciado sesión`,
+        0
       );
       res.status(200).json({
         message: "Inicio de sesión exitoso",
@@ -197,6 +202,7 @@ export const register = async (req, res) => {
       usuario,
       "CREACION",
       `Usuario ${usuario} registrado con éxito`,
+      0
     );
     res.status(201).json({
       message: "Usuario registrado con éxito",
@@ -249,6 +255,7 @@ export const updateContraseña = async (req, res) => {
       usuario,
       "ACTUALIZACION",
       `Usuario ${usuario} a actualizado la contraseña con éxito`,
+      0
     );
     res.status(200).json({ message: "Contraseña actualizada con éxito" });
   } catch (error) {

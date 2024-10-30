@@ -2,7 +2,7 @@ import model from "../models/index.js";
 import { uuid } from "uuidv4";
 import { getNow, getToday } from "../utils/dates.js";
 
-export const registrarBitacora = async (usuario_bitacora, tipo, accion) => {
+export const registrarBitacora = async (usuario_bitacora, tipo, accion, id_linea) => {
     await model.bitacora.sync()
     const fechaISO = getToday();
     const horaLegible = getNow();
@@ -13,6 +13,7 @@ export const registrarBitacora = async (usuario_bitacora, tipo, accion) => {
         tipo,
         accion,
         fecha: `${fechaISO}`,
-        hora: `${horaLegible}`
+        hora: `${horaLegible}`,
+        id_linea
     });
 };

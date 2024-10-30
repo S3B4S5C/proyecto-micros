@@ -30,31 +30,34 @@ export const finalizarTurno = async (req, res) => {
 };
 
 export const designarTurno = async (req, res) => {
-  const { interno, chofer, partida, token } = req.body;
+  const { interno, id_linea, chofer, partida, token } = req.body;
   const horario = uuid();
   const id_turno = uuid();
   try {
-    const operador = await userFromToken(token);
-    console.log(operador);
+    const operador = userFromToken(token);
     await iniciarHorario(horario, partida, operador);
 
-    const micro = await model.micro.findOne({ where: { interno } });
-    console.log(micro.dataValues.id_micro);
-    console.log(horario);
-    console.log(chofer);
+    const micro = await model.micro.findOne({
+      where: { interno },
+      include: [
+            {
+              model: model.linea,
+              required: true,
+              where: { id_linea },
+            },
+          ],
+    });
     const turnoDesignado = await model.turno.create({
       id_turno,
       usuario_chofer: chofer,
       id_horario: horario,
       id_micro: micro.dataValues.id_micro,
     });
-    console.log("hola")
     registrarBitacora(
       operador,
       "TURNO",
       `El chofer ${chofer} ha iniciado un turno en el interno ${interno}`,
     );
-    console.log("hola")
     res
       .status(201)
       .json({ message: "Turno registrado con éxito", turno: turnoDesignado });
@@ -93,7 +96,7 @@ export const eliminarTurno = async (res, req) => {
 };
 
 export const getTurnosActivos = async (req, res) => {
-    const linea = req.body.id_linea;
+  const linea = req.body.id_linea;
   const turnos = await model.turno.findAll({
     include: [
       {
@@ -110,7 +113,7 @@ export const getTurnosActivos = async (req, res) => {
               {
                 model: model.linea,
                 required: true,
-                where: {id_linea: linea},
+                where: { id_linea: linea },
               },
             ],
           },

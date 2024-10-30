@@ -161,3 +161,7 @@ export const getMicrosPorLineaConEstado = async (req, res) => {
     });
   }
 };
+
+export const nuevoMantenimiento = async (req, res) => {
+    
+}
