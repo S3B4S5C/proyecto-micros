@@ -18,11 +18,11 @@ const crearMicro = async (
   año,
   seguro,
   dueño,
-  linea, res
+  linea
 ) => {
   if (await existePlaca(placa))
     throw new Error({ message: `La placa ${placa} ya esta en uso` });
-  await model.micro.create({
+  const microRegistrado= await model.micro.create({
     placa: placa,
     interno: interno,
     modelo: modelo,
@@ -31,15 +31,15 @@ const crearMicro = async (
     id_dueño: dueño,
     id_linea: linea,
   });
-  res.status(201).json({ message: "Micro registrado con éxito", micro: microRegistrado });
+  return microRegistrado;
 };
 
 export const registrarMicro = async (req, res) => {
   const { placa, interno, modelo, año, seguro, dueño, token, linea } = req.body;
   const operador = userFromToken(token);
   try {
-    await crearMicro(placa, interno, modelo, año, seguro, dueño, linea);
-    registrarBitacora(
+    const microRegistrado = await crearMicro(placa, interno, modelo, año, seguro, dueño, linea);
+    await registrarBitacora(
       operador,
       "CREACION",
       `Micro ${microRegistrado} se ha creado correctamente`,
