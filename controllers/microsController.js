@@ -11,7 +11,15 @@ const existePlaca = async (placa) => {
   return placaExistente !== null;
 };
 
-const crearMicro = async (placa, interno, modelo, año, seguro, dueño, linea) => {
+const crearMicro = async (
+  placa,
+  interno,
+  modelo,
+  año,
+  seguro,
+  dueño,
+  linea
+) => {
   if (await existePlaca(placa))
     throw new Error({ message: `La placa ${placa} ya esta en uso` });
   await model.micro.create({
@@ -21,7 +29,7 @@ const crearMicro = async (placa, interno, modelo, año, seguro, dueño, linea) =
     año: año,
     seguro: seguro,
     id_dueño: dueño,
-    id_linea: linea
+    id_linea: linea,
   });
 };
 
@@ -40,12 +48,10 @@ export const registrarMicro = async (req, res) => {
       .status(201)
       .json({ message: "Micro registrado con éxito", micro: microRegistrado });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Error al registrar el micro carajo",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error al registrar el micro carajo",
+      error: error.message,
+    });
   }
 };
 
@@ -163,11 +169,6 @@ export const getMicrosPorLineaConEstado = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
-
-=======
-export const nuevoMantenimiento = async (req, res) => {};
->>>>>>> 64c9ead452485a465fbb6ba7ca50ae2832be2a00
 export const getMicrosPorLineaDisponibles = async (req, res) => {
   const { token } = req.body;
   const id_linea = idLineaFromToken(token);
@@ -205,10 +206,5 @@ export const getMicrosPorLineaDisponibles = async (req, res) => {
     });
   }
 };
-<<<<<<< HEAD
 
-export const nuevoMantenimiento = async (req, res) => {
-    
-}
-=======
->>>>>>> 64c9ead452485a465fbb6ba7ca50ae2832be2a00
+export const nuevoMantenimiento = async (req, res) => {};
