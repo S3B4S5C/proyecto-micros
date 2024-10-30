@@ -87,8 +87,16 @@ model.dueño.belongsTo(model.informacionesPersonales, {
   foreignKey: "id_informacion",
 });
 
-model.dueño.hasMany(model.micro, { foreignKey: "id_dueño" });
-model.micro.belongsTo(model.dueño, { foreignKey: "id_dueño" });
+model.dueño.hasMany(model.micro, {
+  foreignKey: "id_dueño",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+model.micro.belongsTo(model.dueño, {
+  foreignKey: "id_dueño",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
 
 model.micro.hasMany(model.revisionTecnica, { foreignKey: "id_micro" });
 model.revisionTecnica.belongsTo(model.micro, { foreignKey: "id_micro" });
@@ -96,13 +104,26 @@ model.revisionTecnica.belongsTo(model.micro, { foreignKey: "id_micro" });
 model.micro.hasMany(model.estado, { foreignKey: "id_micro" });
 model.estado.belongsTo(model.micro, { foreignKey: "id_micro" });
 
-model.micro.belongsToMany(model.choferes, {
-  through: model.turno,
-  foreignKey: "id_micro",
-});
-model.choferes.belongsToMany(model.micro, {
-  through: model.turno,
+model.choferes.hasMany(model.turno, {
   foreignKey: "usuario_chofer",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+model.turno.belongsTo(model.choferes, {
+  foreignKey: "usuario_chofer",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+
+model.micro.hasMany(model.turno, {
+  foreignKey: "id_micro",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+model.turno.belongsTo(model.micro, {
+  foreignKey: "id_micro",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
 });
 
 model.turno.hasOne(model.incidente, {
@@ -110,6 +131,8 @@ model.turno.hasOne(model.incidente, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 });
+
+
 model.incidente.belongsTo(model.turno, {
   foreignKey: "id_turno",
   onDelete: "CASCADE",
@@ -171,8 +194,8 @@ model.comentario.belongsTo(model.linea, { foreignKey: "id_linea" });
 model.sindicato.hasMany(model.linea, { foreignKey: "id_sindicato" });
 model.linea.belongsTo(model.sindicato, { foreignKey: "id_sindicato" });
 
-model.linea.hasMany(model.micro, { foreignKey: 'id_linea' });
-model.micro.belongsTo(model.linea, { foreignKey: 'id_linea' });
+model.linea.hasMany(model.micro, { foreignKey: "id_linea" });
+model.micro.belongsTo(model.linea, { foreignKey: "id_linea" });
 
 model.micro.hasMany(model.mantenimiento, { foreignKey: "id_micro" });
 model.mantenimiento.belongsTo(model.micro, { foreignKey: "id_micro" });

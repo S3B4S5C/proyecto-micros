@@ -50,6 +50,7 @@ const buscarRol = async (usuario) => {
 };
 
 export const login = async (req, res) => {
+  let id_linea = 1;
   const { usuario, contraseña } = req.body; 
   try {
     const usuarioLogged = await model.usuarios.findByPk(usuario);
@@ -65,7 +66,7 @@ export const login = async (req, res) => {
         const op = await model.operadores.findOne({ where: { usuario_operador: usuario } })
         id_linea = op.id_linea
       }
-      const token = generateToken(usuario, rol, id_linea);
+      const token = await generateToken(usuario, rol, id_linea);
       var farFuture = new Date(new Date().getTime() + (1000*60*60*24*365*10));
       res.cookie("token", token, {
         httpOnly: true, // Protege la cookie para que no pueda ser accedida por JavaScript en el navegador

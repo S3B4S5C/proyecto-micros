@@ -1,7 +1,7 @@
 import model from "../models/index.js";
 import { CODIGO_OPERADOR, TOKEN_KEY } from "../config.js";
 import { registrarBitacora } from "../services/bitacora.js";
-import { userFromToken } from "../services/auth.js";
+import { userFromToken, idLineaFromToken } from "../services/auth.js";
 const existeUsuario = async (usuario) => {
   const UsuarioExistente = await model.usuarios.findByPk(usuario);
   return UsuarioExistente !== null;
@@ -59,6 +59,7 @@ export const updateUsuario = async (req, res) => {
 
 export const crearChofer = async (req, res) => {
   const { usuario, licencia } = req.body;
+  const id_linea = idLineaFromToken(req.body.token);
   try {
     if (existeUsuario(usuario)) {
       await model.choferes.create({
@@ -69,6 +70,7 @@ export const crearChofer = async (req, res) => {
         usuario,
         "ACTUALIZACION",
         `Al usuario ${usuario} se le ha asignado el rol de chofer`,
+        id_linea
       );
       res.status(201).json({ message: "Chofer creado con exito" });
     } else {
@@ -271,6 +273,7 @@ export const getUsuario = async (req, res) => {
 
 export const eliminarChofer = async (req, res) => {
   const { usuario } = req.params;
+  const id_linea = idLineaFromToken(req.body.token);
   try {
     const chofer = await model.choferes.findOne({
       where: { usuario_chofer: usuario },
@@ -281,6 +284,7 @@ export const eliminarChofer = async (req, res) => {
         usuario,
         "ACTUALIZACION",
         `Al usuario ${usuario} se le ha quitado el rol de chofer`,
+        id_linea
       );
       res.status(200).json({ message: "Rol de chofer eliminado con éxito" });
     } else {
@@ -332,8 +336,15 @@ export const eliminarDueño = async (res, req) => {
 export const getBitacora = async (req, res) => {
   try {
     const bitacora = await model.bitacora.findAll({
-      include: [
-        
+      include: [{
+        model: model.usuarios,
+        include: [{
+          model: model.operadores,
+          where: {
+            id_linea: idLineaFromToken(req.body.token)
+          }
+        }]
+      }
       ]
     });
     res.status(200).json(bitacora);
