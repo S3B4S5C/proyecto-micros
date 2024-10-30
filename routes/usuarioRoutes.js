@@ -1,5 +1,5 @@
 import express from 'express'
-import { updateUsuario, crearChofer, crearOperador, getChoferes, getChofer, getUsuario, eliminarChofer, crearDueño, eliminarDueño } from '../controllers/userController.js'
+import { updateUsuario, crearChofer, crearOperador, getChoferes, getChofer, getUsuario, eliminarChofer, crearDueño, eliminarDueño, getBitacora } from '../controllers/userController.js'
 import { validateSchema } from '../middlewares/validator.middleware.js'
 import { authRequired } from '../middlewares/authRequired.js'
 import { operadorValidation } from '../middlewares/roleValidation.js'
@@ -20,4 +20,5 @@ router.get('/:usuario', getUsuario)
 router.put('/actualizarPass', authRequired, updateContraseña)
 router.post('/registrarTelefono', authRequired, registrarTelefono)
 
+router.post('/bitacora', authRequired, operadorValidation, getBitacora)
 export default router
