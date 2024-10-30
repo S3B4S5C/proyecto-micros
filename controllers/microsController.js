@@ -30,13 +30,14 @@ export const registrarMicro = async (req, res) => {
     await crearMicro(placa, interno, modelo, año, seguro, dueño);
     const micro = crearMicro.id;
     const microRegistrado = await model.trabajan.create({
-      id_lineas: linea,
+      id_linea: linea,
       id_micro: micro,
     });
     registrarBitacora(
       operador,
       "CREACION",
       `Micro ${microRegistrado} se ha creado correctamente`,
+      linea
     );
     res
       .status(201)
@@ -66,7 +67,7 @@ export const eliminarMicro = async (req, res) => {
     registrarBitacora(
       token.id,
       "ELIMINACION",
-      `Micro ${micro} se ha eliminado con éxito`,
+      `Micro ${micro} se ha eliminado con éxito`
     );
     res.status(200).json({ message: "Micro eliminado con éxito" });
   } catch (error) {
@@ -162,6 +163,4 @@ export const getMicrosPorLineaConEstado = async (req, res) => {
   }
 };
 
-export const nuevoMantenimiento = async (req, res) => {
-    
-}
+export const nuevoMantenimiento = async (req, res) => {};
