@@ -11,7 +11,7 @@ const existePlaca = async (placa) => {
   return placaExistente !== null;
 };
 
-const crearMicro = async (placa, interno, modelo, año, seguro, dueño) => {
+const crearMicro = async (placa, interno, modelo, año, seguro, dueño, linea) => {
   if (await existePlaca(placa))
     throw new Error({ message: `La placa ${placa} ya esta en uso` });
   await model.micro.create({
@@ -21,6 +21,7 @@ const crearMicro = async (placa, interno, modelo, año, seguro, dueño) => {
     año: año,
     seguro: seguro,
     id_dueño: dueño,
+    id_linea: linea
   });
 };
 
@@ -28,12 +29,7 @@ export const registrarMicro = async (req, res) => {
   const { placa, interno, modelo, año, seguro, dueño, token, linea } = req.body;
   const operador = userFromToken(token);
   try {
-    await crearMicro(placa, interno, modelo, año, seguro, dueño);
-    const micro = crearMicro.id;
-    const microRegistrado = await model.trabajan.create({
-      id_linea: linea,
-      id_micro: micro,
-    });
+    await crearMicro(placa, interno, modelo, año, seguro, dueño, linea);
     registrarBitacora(
       operador,
       "CREACION",
@@ -164,9 +160,7 @@ export const getMicrosPorLineaConEstado = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
-export const nuevoMantenimiento = async (req, res) => {};
-=======
+
 export const getMicrosPorLineaDisponibles = async (req, res) => {
   const { token } = req.body;
   const id_linea = idLineaFromToken(token);
@@ -208,4 +202,3 @@ export const getMicrosPorLineaDisponibles = async (req, res) => {
 export const nuevoMantenimiento = async (req, res) => {
     
 }
->>>>>>> fabb17af293ead6d29e9961b33568a6a4464df1d
