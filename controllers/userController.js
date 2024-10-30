@@ -31,7 +31,7 @@ export const updateUsuario = async (req, res) => {
       registrarBitacora(
         usuario,
         "ACTUALIZACION",
-        `El usuario ${usuario} ha sido actualizado`,
+        `El usuario ${usuario} ha sido actualizado`
       );
 
       res.status(201).json({
@@ -92,7 +92,7 @@ export const crearOperador = async (req, res) => {
         registrarBitacora(
           usuario,
           "ACTUALIZACION",
-          `Al usuario ${usuario} se le ha asignado el rol de operador`,
+          `Al usuario ${usuario} se le ha asignado el rol de operador`
         );
         res.status(201).json({ message: "Operador creado con exito" });
       } else {
@@ -122,7 +122,7 @@ export const crearDueño = async (res, req) => {
       registrarBitacora(
         usuario,
         "ACTUALIZACION",
-        `El usuario ${usuario} se ha actualizado a dueño de micro`,
+        `El usuario ${usuario} se ha actualizado a dueño de micro`
       );
       res.status(201).json({ message: "Dueño creado con exito" });
     } else {
@@ -139,7 +139,9 @@ export const getChoferes = async (req, res) => {
   const { token } = req.body;
   const user = userFromToken(token);
   try {
+    console.log("carajo");
     const operador = await model.operadores.findByPk(user);
+    console.log("carajo2");
     const choferes = await model.choferes.findAll({
       include: [
         {
@@ -164,6 +166,7 @@ export const getChoferes = async (req, res) => {
         },
       ],
     });
+    console.log("mecagoenlaputa");
     let listaDeChoferes = [];
     for (const chofer of choferes) {
       const choferInfo = {
@@ -178,6 +181,7 @@ export const getChoferes = async (req, res) => {
       };
       listaDeChoferes.push(choferInfo);
     }
+    console.log("mierda");
     res.status(200).json({
       message: "Lista de choferes obtenida con éxito",
       listaDeChoferes,
@@ -209,7 +213,7 @@ export const getChofer = async (req, res) => {
             "direccion",
             "carnet",
           ],
-        },
+        }
       );
 
       res.status(200).json({
@@ -244,7 +248,7 @@ export const getUsuario = async (req, res) => {
           "direccion",
           "carnet",
         ],
-      },
+      }
     );
     const telefonos = await model.telefono.findAll({
       attributes: ["telefono"],
@@ -336,16 +340,19 @@ export const eliminarDueño = async (res, req) => {
 export const getBitacora = async (req, res) => {
   try {
     const bitacora = await model.bitacora.findAll({
-      include: [{
-        model: model.usuarios,
-        include: [{
-          model: model.operadores,
-          where: {
-            id_linea: idLineaFromToken(req.body.token)
-          }
-        }]
-      }
-      ]
+      include: [
+        {
+          model: model.usuarios,
+          include: [
+            {
+              model: model.operadores,
+              where: {
+                id_linea: idLineaFromToken(req.body.token),
+              },
+            },
+          ],
+        },
+      ],
     });
     res.status(200).json(bitacora);
   } catch (error) {
