@@ -46,7 +46,7 @@ export const registrarMicro = async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Error al registrar el micro", error: error.message });
+      .json({ message: "Error al registrar el micro carajo", error: error.message });
   }
 };
 
