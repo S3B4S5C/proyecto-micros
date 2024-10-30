@@ -46,7 +46,10 @@ export const registrarMicro = async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Error al registrar el micro carajo", error: error.message });
+      .json({
+        message: "Error al registrar el micro carajo",
+        error: error.message,
+      });
   }
 };
 
@@ -164,9 +167,7 @@ export const getMicrosPorLineaConEstado = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
 export const nuevoMantenimiento = async (req, res) => {};
-=======
 export const getMicrosPorLineaDisponibles = async (req, res) => {
   const { token } = req.body;
   const id_linea = idLineaFromToken(token);
@@ -204,8 +205,3 @@ export const getMicrosPorLineaDisponibles = async (req, res) => {
     });
   }
 };
-
-export const nuevoMantenimiento = async (req, res) => {
-    
-}
->>>>>>> fabb17af293ead6d29e9961b33568a6a4464df1d
