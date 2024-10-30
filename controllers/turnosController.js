@@ -3,9 +3,11 @@ import { getNow, getToday } from "../utils/dates.js";
 import { userFromToken } from "../services/auth.js";
 import model from "../models/index.js";
 import { registrarBitacora } from "../services/bitacora.js";
-const iniciarHorario = async (uuid, partida, operador) => {
-  const date = getToday();
-  const time = getNow();
+const iniciarHorario = async (uuid, partida, date, time, operador) => {
+  if (!date || !time) {
+    date = getToday();
+    time = getNow();
+  }
   await model.horario.create({
     id_horario: uuid,
     hora_salida: time,
