@@ -3,6 +3,7 @@ import model from "../models/index.js";
 import { getToday, getNow } from "../utils/dates.js";
 import { uuid } from "uuidv4";
 import { userFromToken } from "../services/auth.js";
+import { where } from "sequelize";
 const existePlaca = async (placa) => {
   const placaExistente = await model.micro.findOne({
     where: { placa },
@@ -163,4 +164,48 @@ export const getMicrosPorLineaConEstado = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 export const nuevoMantenimiento = async (req, res) => {};
+=======
+export const getMicrosPorLineaDisponibles = async (req, res) => {
+  const { token } = req.body;
+  const id_linea = idLineaFromToken(token);
+  try {
+    const micros = await model.micro.findAll({
+      include: [
+        {
+          model: model.trabajan,
+          where: { id_linea },
+          attributes: [],
+        },
+        {
+          model: model.estado,
+          where: { estado: "DISPONIBLE" },
+          order: [
+            ["fecha", "DESC"],
+            ["hora", "DESC"],
+          ],
+          limit: 1,
+        },
+      ],
+    });
+
+    if (!micros.length) {
+      return res
+        .status(404)
+        .json({ message: "No se encontraron micros para esta línea." });
+    }
+
+    res.status(200).json(micros);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al obtener los micros por línea",
+      error: error.message,
+    });
+  }
+};
+
+export const nuevoMantenimiento = async (req, res) => {
+    
+}
+>>>>>>> fabb17af293ead6d29e9961b33568a6a4464df1d

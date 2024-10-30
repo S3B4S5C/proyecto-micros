@@ -3,9 +3,11 @@ import { getNow, getToday } from "../utils/dates.js";
 import { userFromToken } from "../services/auth.js";
 import model from "../models/index.js";
 import { registrarBitacora } from "../services/bitacora.js";
-const iniciarHorario = async (uuid, partida, operador) => {
-  const date = getToday();
-  const time = getNow();
+const iniciarHorario = async (uuid, partida, date, time, operador) => {
+  if (!date || !time) {
+    date = getToday();
+    time = getNow();
+  }
   await model.horario.create({
     id_horario: uuid,
     hora_salida: time,
@@ -30,11 +32,13 @@ export const finalizarTurno = async (req, res) => {
 };
 
 export const designarTurno = async (req, res) => {
-  const { interno, id_linea, chofer, partida, token } = req.body;
+  const { interno, chofer, partida, token } = req.body;
   const horario = uuid();
   const id_turno = uuid();
   try {
     const operador = userFromToken(token);
+    const id_linea = idLineaFromToken(token);
+
     await iniciarHorario(horario, partida, operador);
 
     const micro = await model.micro.findOne({
@@ -55,8 +59,9 @@ export const designarTurno = async (req, res) => {
     });
     registrarBitacora(
       operador,
-      "TURNO",
+      "CREACION",
       `El chofer ${chofer} ha iniciado un turno en el interno ${interno}`,
+      id_linea
     );
     res
       .status(201)
