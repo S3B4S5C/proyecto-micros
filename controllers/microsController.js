@@ -18,7 +18,7 @@ const crearMicro = async (
   año,
   seguro,
   dueño,
-  linea
+  linea, res
 ) => {
   if (await existePlaca(placa))
     throw new Error({ message: `La placa ${placa} ya esta en uso` });
@@ -31,6 +31,7 @@ const crearMicro = async (
     id_dueño: dueño,
     id_linea: linea,
   });
+  res.status(201).json({ message: "Micro registrado con éxito", micro: microRegistrado });
 };
 
 export const registrarMicro = async (req, res) => {
@@ -49,7 +50,7 @@ export const registrarMicro = async (req, res) => {
       .json({ message: "Micro registrado con éxito", micro: microRegistrado });
   } catch (error) {
     res.status(500).json({
-      message: "Error al registrar el micro carajo",
+      message: "Error al registrar el micro ",
       error: error.message,
     });
   }
