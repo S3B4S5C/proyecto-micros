@@ -30,11 +30,13 @@ export const finalizarTurno = async (req, res) => {
 };
 
 export const designarTurno = async (req, res) => {
-  const { interno, id_linea, chofer, partida, token } = req.body;
+  const { interno, chofer, partida, token } = req.body;
   const horario = uuid();
   const id_turno = uuid();
   try {
     const operador = userFromToken(token);
+    const id_linea = idLineaFromToken(token);
+
     await iniciarHorario(horario, partida, operador);
 
     const micro = await model.micro.findOne({
@@ -55,8 +57,9 @@ export const designarTurno = async (req, res) => {
     });
     registrarBitacora(
       operador,
-      "TURNO",
+      "CREACION",
       `El chofer ${chofer} ha iniciado un turno en el interno ${interno}`,
+      id_linea
     );
     res
       .status(201)
