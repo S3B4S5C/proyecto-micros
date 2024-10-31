@@ -13,13 +13,14 @@ const existePlaca = async (placa) => {
 
 export const registrarMicro = async (req, res) => {
   const { placa, interno, modelo, año, seguro, dueño, token } = req.body;
-  const operador = userFromToken(token);
-  const id_linea = idLineaFromToken(token);
+  const operador = await userFromToken(token);
+  const id_linea = await idLineaFromToken(token);
+  console.log(placa, interno, modelo, año, seguro, dueño, token);
   try {
     if (await existePlaca(placa))
       return res.status(500).json({message: `La placa ${placa} ya esta en uso`});
 
-    const microRegistrado= await model.micro.create({
+    const microRegistrado = await model.micro.create({
       placa,
       interno,
       modelo,
