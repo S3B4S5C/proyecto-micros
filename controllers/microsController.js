@@ -2,8 +2,8 @@ import { registrarBitacora } from "../services/bitacora.js";
 import model from "../models/index.js";
 import { getToday, getNow } from "../utils/dates.js";
 import { uuid } from "uuidv4";
-import { userFromToken } from "../services/auth.js";
-import { where } from "sequelize";
+import { userFromToken, idLineaFromToken } from "../services/auth.js";
+
 const existePlaca = async (placa) => {
   const placaExistente = await model.micro.findOne({
     where: { placa },
@@ -11,39 +11,28 @@ const existePlaca = async (placa) => {
   return placaExistente !== null;
 };
 
-const crearMicro = async (
-  placa,
-  interno,
-  modelo,
-  año,
-  seguro,
-  dueño,
-  linea
-) => {
-  if (await existePlaca(placa))
-    throw new Error({ message: `La placa ${placa} ya esta en uso` });
-  const microRegistrado= await model.micro.create({
-    placa: placa,
-    interno: interno,
-    modelo: modelo,
-    año: año,
-    seguro: seguro,
-    id_dueño: dueño,
-    id_linea: linea,
-  });
-  return microRegistrado;
-};
-
 export const registrarMicro = async (req, res) => {
-  const { placa, interno, modelo, año, seguro, dueño, token, linea } = req.body;
+  const { placa, interno, modelo, año, seguro, dueño, token } = req.body;
   const operador = userFromToken(token);
+  const id_linea = idLineaFromToken(token);
   try {
-    const microRegistrado = await crearMicro(placa, interno, modelo, año, seguro, dueño, linea);
+    if (await existePlaca(placa))
+      return res.status(500).json({message: `La placa ${placa} ya esta en uso`});
+
+    const microRegistrado= await model.micro.create({
+      placa,
+      interno,
+      modelo,
+      año,
+      seguro,
+      id_dueño: dueño,
+      id_linea,
+    });
     await registrarBitacora(
       operador,
       "CREACION",
       `Micro ${microRegistrado} se ha creado correctamente`,
-      linea
+      id_linea
     );
     res
       .status(201)
