@@ -51,35 +51,38 @@ const buscarRol = async (usuario) => {
 
 export const login = async (req, res) => {
   let id_linea = 1;
+  let rol = "Pasajero";
   const { usuario, contraseña } = req.body; 
   try {
-    const usuarioLogged = await model.usuarios.findByPk(usuario);
-    const informacion = await model.informacionesPersonales.findByPk(
-      usuarioLogged.id_informacion,
-    );
+    const usuarioLogged = await model.usuarios.findByPk(usuario, {
+      include: [
+        { model: model.informacionesPersonales },
+        { model: model.choferes},
+        { model: model.operadores},
+    ]});
+    const informacion = usuarioLogged.dataValues.informaciones_personale;
     if (!usuarioLogged)
       return res.status(404).json({ message: "El usuario no existe" });
 
     if (await comparePassword(contraseña, usuarioLogged.contraseña)) {
-      const rol = await buscarRol(usuario);
-      if (rol === "Operador") {
-        const op = await model.operadores.findOne({ where: { usuario_operador: usuario } })
-        id_linea = op.id_linea
+      if (usuarioLogged.dataValues.operadore) {
+
+        id_linea = usuarioLogged.dataValues.operadore.dataValues.id_linea
         registrarBitacora(
           usuario,
           "INICIO_SESION",
           `El operador ${usuario} inicio sesion`,
           id_linea
         )
-      }
-
-      if (rol === "Chofer") {
+        rol = "Operador"
+      }else if (usuarioLogged.dataValues.chofere) {
         registrarBitacora(
           usuario,
           "INICIO_SESION",
           `El chofer ${usuario} inicio sesion`,
           id_linea
         )
+        rol = "Chofer"
       }
 
       const token = await generateToken(usuario, rol, id_linea);
