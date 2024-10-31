@@ -60,6 +60,7 @@ export const updateUsuario = async (req, res) => {
 export const crearChofer = async (req, res) => {
   const { usuario, licencia } = req.body;
   const id_linea = idLineaFromToken(req.body.token);
+  const operador = userFromToken(req.body.token);
   try {
     if (existeUsuario(usuario)) {
       await model.choferes.create({
@@ -67,7 +68,7 @@ export const crearChofer = async (req, res) => {
         licencia_categoria: licencia,
       });
       registrarBitacora(
-        usuario,
+        operador,
         "ACTUALIZACION",
         `Al usuario ${usuario} se le ha asignado el rol de chofer`,
         id_linea,
@@ -170,7 +171,6 @@ export const getChoferes = async (req, res) => {
         },
       ],
     });
-    console.log("mecagoenlaputa");
     let listaDeChoferes = [];
     for (const chofer of choferes) {
       const choferInfo = {
@@ -282,6 +282,7 @@ export const getUsuario = async (req, res) => {
 export const eliminarChofer = async (req, res) => {
   const { usuario } = req.params;
   const id_linea = idLineaFromToken(req.body.token);
+  const operador = userFromToken(req.body.token);
   try {
     const chofer = await model.choferes.findOne({
       where: { usuario_chofer: usuario },
@@ -289,7 +290,7 @@ export const eliminarChofer = async (req, res) => {
     if (chofer) {
       await model.choferes.destroy({ where: { usuario_chofer: usuario } });
       registrarBitacora(
-        usuario,
+        operador,
         "ACTUALIZACION",
         `Al usuario ${usuario} se le ha quitado el rol de chofer`,
         id_linea,
