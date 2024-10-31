@@ -342,6 +342,37 @@ export const eliminarDueño = async (res, req) => {
   }
 };
 
+export const getDueños = async (req, res) => {
+  try{
+    const dueños = await model.dueño.findAll({
+      attributes: ["id_dueño"],
+      include:[
+        {
+          model: model.informacionesPersonales,
+          attributes:["nombre","apellido"]
+        }
+      ]
+    });
+    if(!dueños.length){
+      return res.status(404).json({ message: "No se encontraron dueños "})
+    }
+    let listaDeDueños = [];
+    for (const dueño of dueños) {
+      const dueñoInfo = {
+        id: dueño.id_dueño,
+        nombre: dueño.informaciones_personale.nombre,
+        apellido: dueño.informaciones_personale.apellido,
+      };
+      listaDeDueños.push(dueñoInfo);
+    }
+    res.status(200).json(listaDeDueños);
+  }catch(error){
+    res.status(500).json({
+      message: "Error al obtener los dueños", error: error.message
+    })
+  }
+};
+
 export const getBitacora = async (req, res) => {
   try {
     const bitacora = await model.bitacora.findAll({
