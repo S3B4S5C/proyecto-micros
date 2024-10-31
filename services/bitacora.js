@@ -6,7 +6,7 @@ export const registrarBitacora = async (usuario_bitacora, tipo, accion, id_linea
     await model.bitacora.sync()
     const fechaISO = getToday();
     const horaLegible = getNow();
-    
+    console.log(fechaISO,horaLegible);
     await model.bitacora.create({
         id_bitacora: uuid(),
         usuario_bitacora,
