@@ -31,7 +31,7 @@ export const updateUsuario = async (req, res) => {
       registrarBitacora(
         usuario,
         "ACTUALIZACION",
-        `El usuario ${usuario} ha sido actualizado`,
+        `El usuario ${usuario} ha sido actualizado`
       );
 
       res.status(201).json({
@@ -71,7 +71,7 @@ export const crearChofer = async (req, res) => {
         operador,
         "ACTUALIZACION",
         `Al usuario ${usuario} se le ha asignado el rol de chofer`,
-        id_linea,
+        id_linea
       );
       res.status(201).json({ message: "Chofer creado con exito" });
     } else {
@@ -93,7 +93,7 @@ export const crearOperador = async (req, res) => {
         registrarBitacora(
           usuario,
           "ACTUALIZACION",
-          `Al usuario ${usuario} se le ha asignado el rol de operador`,
+          `Al usuario ${usuario} se le ha asignado el rol de operador`
         );
         res.status(201).json({ message: "Operador creado con exito" });
       } else {
@@ -123,7 +123,7 @@ export const crearDueño = async (res, req) => {
       registrarBitacora(
         usuario,
         "ACTUALIZACION",
-        `El usuario ${usuario} se ha actualizado a dueño de micro`,
+        `El usuario ${usuario} se ha actualizado a dueño de micro`
       );
       res.status(201).json({ message: "Dueño creado con exito" });
     } else {
@@ -217,7 +217,7 @@ export const getChofer = async (req, res) => {
             "direccion",
             "carnet",
           ],
-        },
+        }
       );
 
       res.status(200).json({
@@ -252,7 +252,7 @@ export const getUsuario = async (req, res) => {
           "direccion",
           "carnet",
         ],
-      },
+      }
     );
     const telefonos = await model.telefono.findAll({
       attributes: ["telefono"],
@@ -293,7 +293,7 @@ export const eliminarChofer = async (req, res) => {
         operador,
         "ACTUALIZACION",
         `Al usuario ${usuario} se le ha quitado el rol de chofer`,
-        id_linea,
+        id_linea
       );
       res.status(200).json({ message: "Rol de chofer eliminado con éxito" });
     } else {
@@ -332,7 +332,7 @@ export const eliminarDueño = async (res, req) => {
       usuario,
       "ELIMINACION",
       `El usuario ${usuario} ha dejado de ser dueño`,
-      id_linea,
+      id_linea
     );
     res.status(200).json({ message: "Dueño eliminado con éxito" });
   } catch (error) {
