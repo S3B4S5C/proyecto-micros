@@ -122,8 +122,27 @@ export const getTurnosActivos = async (req, res) => {
             ],
           },
         ],
-      },
+      }, 
+      {
+        model: model.micro,
+        attributes: ["interno", "placa"],
+      }
     ],
   });
-  res.status(200).json(turnos);
+  let turnosActivos = [];
+  for (const turno of turnos) {
+    const turnoInfo = {
+      id_turno: turno.id_turno,
+      chofer: turno.usuario_chofer,
+      interno: turno.micro.interno,
+      placa: turno.micro.placa,
+      id_horario: turno.horario.id_horario,
+      fecha_horario: turno.horario.fecha_horario,
+      hora_salida: turno.horario.hora_salida,
+      hora_llegada: turno.horario.hora_llegada,
+      punto_de_salida: turno.horario.punto_de_salida,
+    };
+    turnosActivos.push(turnoInfo);
+    };
+  res.status(200).json(turnosActivos);
 };
