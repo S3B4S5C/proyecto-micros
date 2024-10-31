@@ -41,6 +41,7 @@ export const registrarSindicato = async (req, res) => {
       "ADMINISTRADOR",
       "CREACION",
       `Sindicato ${nombre} se ha creado con éxito`,
+  
     );
     res
       .status(201)
@@ -55,6 +56,7 @@ export const registrarSindicato = async (req, res) => {
 
 export const registrarLinea = async (req, res) => {
   const { nombre, sindicato } = req.body;
+
   try {
     if (await existeLinea(nombre)) {
       return res
@@ -72,6 +74,7 @@ export const registrarLinea = async (req, res) => {
       "ADMINISTRADOR",
       "CREACION",
       `Linea ${nombre_linea} se ha creado con éxito`,
+
     );
     res
       .status(201)
@@ -91,6 +94,7 @@ export const crearRuta = async (req, res) => {
       "ADMINISTRADOR",
       "CREACION",
       `Ruta ${rutaNueva} se ha creado con éxito`,
+      id_linea
     );
     res
       .status(201)
@@ -104,6 +108,7 @@ export const crearRuta = async (req, res) => {
 
 export const crearParada = async (req, res) => {
   const { nombre, orden, ruta, latitud, longitud, token } = req.body;
+  const id_linea = idLineaFromToken(req.body.token);
   const id_parada = uuid();
   const coordenada = uuid();
   try {
@@ -115,10 +120,11 @@ export const crearParada = async (req, res) => {
       id_ruta: ruta,
       id_coordenada: coordenada,
     });
-    registrarBitacora(
+    await registrarBitacora(
       token.id,
       "CREACION",
       `Parada ${nombre_parada} se ha creado con éxito`,
+      id_linea
     );
     res
       .status(201)
@@ -143,6 +149,7 @@ export const crearParadaProvisional = async (req, res) => {
   } = req.body;
   const id_provisional = uuid();
   const coordenada = uuid();
+  const id_linea = idLineaFromToken(req.body.token);
   try {
     await crearCoordenada(coordenada, latitud, longitud);
     const paradaProvisionalNueva = await model.paradaProvisional.create({
@@ -153,10 +160,11 @@ export const crearParadaProvisional = async (req, res) => {
       id_coordenada: coordenada,
       id_parada_provisional,
     });
-    registrarBitacora(
+    await registrarBitacora(
       token.id,
       "CREACION",
       `Parada provisional ${paradaProvisionalNueva} se ha creado con éxito`,
+      id_linea
     );
     res.status(201).json({
       message: "Parada provisional registrada con éxito",
@@ -174,6 +182,7 @@ export const crearParadaProvisional = async (req, res) => {
 export const deshabilitarParadaProvisional = async (req, res) => {
   const { token } = req.body;
   const { id } = req.params;
+  const id_linea = idLineaFromToken(req.body.token);
   const fecha_fin = Date.now();
   console.log(fecha_fin);
   try {
@@ -185,10 +194,11 @@ export const deshabilitarParadaProvisional = async (req, res) => {
     }
     paradaProvisional.fecha_fin = fecha_fin;
     await paradaProvisional.save();
-    registrarBitacora(
+    await registrarBitacora(
       token.id,
       "ELIMINACION",
       `Parada provisonal ${paradaProvisional} se ha eliminado con éxito`,
+      id_linea
     );
     res.status(200).json({
       message: "Parada provisional deshabilitada con éxito",
@@ -205,6 +215,7 @@ export const deshabilitarParadaProvisional = async (req, res) => {
 export const eliminarParada = async (req, res) => {
   const { token } = req.body;
   const { id } = req.params;
+  const id_linea = idLineaFromToken(req.body.token);
   try {
     const parada = await model.parada.findByPk(id);
     if (!parada) {
@@ -215,10 +226,11 @@ export const eliminarParada = async (req, res) => {
     if (coordenada) {
       await coordenada.destroy();
     }
-    registrarBitacora(
+    await registrarBitacora(
       token.id,
       "ELIMINACION",
       `Parada ${parada} se ha eliminado con éxito`,
+      id_linea
     );
     res.status(200).json({ message: "Parada eliminada con éxito" });
   } catch (error) {

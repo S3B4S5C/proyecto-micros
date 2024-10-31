@@ -50,6 +50,7 @@ export const registrarMicro = async (req, res) => {
 export const eliminarMicro = async (req, res) => {
   const { token } = req.body;
   const { id } = req.params;
+  const id_linea = idLineaFromToken(req.body.token);
   try {
     const trabajan = await model.trabajan.findByPK(id);
     if (!trabajan) {
@@ -65,7 +66,8 @@ export const eliminarMicro = async (req, res) => {
     registrarBitacora(
       token.id,
       "ELIMINACION",
-      `Micro ${micro} se ha eliminado con éxito`
+      `Micro ${micro} se ha eliminado con éxito`,
+      id_linea
     );
     res.status(200).json({ message: "Micro eliminado con éxito" });
   } catch (error) {

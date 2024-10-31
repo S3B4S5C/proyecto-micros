@@ -76,6 +76,7 @@ export const designarTurno = async (req, res) => {
 export const eliminarTurno = async (res, req) => {
   const { token } = req.body;
   const { id } = req.params;
+  const id_linea = idLineaFromToken(req.body.token);
   try {
     const turno = await model.turno.findByPk(id);
     if (!turno) {
@@ -90,6 +91,7 @@ export const eliminarTurno = async (res, req) => {
       token.id,
       "ELIMINACION",
       `Turno ${turno} se ha eliminado con éxito`,
+      id_linea
     );
     res.status(200).json({ message: "Turno eliminado con éxito" });
   } catch (error) {

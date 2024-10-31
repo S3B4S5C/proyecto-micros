@@ -91,7 +91,7 @@ export const crearOperador = async (req, res) => {
       if (existeUsuario(usuario)) {
         await model.operadores.create({ usuario_operador: usuario, id_linea });
         registrarBitacora(
-          usuario,
+          "ADMINISTRADOR",
           "ACTUALIZACION",
           `Al usuario ${usuario} se le ha asignado el rol de operador`
         );
@@ -113,6 +113,8 @@ export const crearOperador = async (req, res) => {
 
 export const crearDueño = async (res, req) => {
   const { usuario } = req.body;
+  const id_linea = idLineaFromToken(req.body.token);
+  const operador = userFromToken(req.body.token);
   try {
     if (existeUsuario(usuario)) {
       const usuarioExistente = await model.usuarios.findByPk(usuario);
@@ -121,9 +123,10 @@ export const crearDueño = async (res, req) => {
         id_informacion,
       });
       registrarBitacora(
-        usuario,
+        operador,
         "ACTUALIZACION",
-        `El usuario ${usuario} se ha actualizado a dueño de micro`
+        `El usuario ${usuario} se ha actualizado a dueño de micro`,
+        id_linea
       );
       res.status(201).json({ message: "Dueño creado con exito" });
     } else {
