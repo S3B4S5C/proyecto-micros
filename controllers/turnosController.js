@@ -1,21 +1,9 @@
 import { uuid } from "uuidv4";
 import { getNow, getToday } from "../utils/dates.js";
-import { userFromToken } from "../services/auth.js";
+import { userFromToken, idLineaFromToken } from "../services/auth.js";
 import model from "../models/index.js";
 import { registrarBitacora } from "../services/bitacora.js";
-const iniciarHorario = async (uuid, partida, date, time, operador) => {
-  if (!date || !time) {
-    date = getToday();
-    time = getNow();
-  }
-  await model.horario.create({
-    id_horario: uuid,
-    hora_salida: time,
-    punto_de_salida: partida,
-    fecha_horario: date,
-    usuario_operador: operador,
-  });
-};
+const iniciarHorario = async (uuid, partida, date, time, operador) => {};
 
 const eliminarHorario = async (uuid) => {
   await model.horario.destroy({ where: { id_horario: uuid } });
@@ -32,24 +20,34 @@ export const finalizarTurno = async (req, res) => {
 };
 
 export const designarTurno = async (req, res) => {
-  const { interno, chofer, partida, token } = req.body;
+  const { interno, chofer, partida, token, } = req.body;
+  let { date, time } = req.body;
   const horario = uuid();
   const id_turno = uuid();
   try {
     const operador = userFromToken(token);
     const id_linea = idLineaFromToken(token);
 
-    await iniciarHorario(horario, partida, operador);
-
+    if (!date || !time) {
+      date = getToday();
+      time = getNow();
+    }
+    await model.horario.create({
+      id_horario: horario,
+      hora_salida: time,
+      punto_de_salida: partida,
+      fecha_horario: date,
+      usuario_operador: operador,
+    });
     const micro = await model.micro.findOne({
       where: { interno },
       include: [
-            {
-              model: model.linea,
-              required: true,
-              where: { id_linea },
-            },
-          ],
+        {
+          model: model.linea,
+          required: true,
+          where: { id_linea },
+        },
+      ],
     });
     const turnoDesignado = await model.turno.create({
       id_turno,
@@ -61,8 +59,9 @@ export const designarTurno = async (req, res) => {
       operador,
       "CREACION",
       `El chofer ${chofer} ha iniciado un turno en el interno ${interno}`,
-      id_linea
+      id_linea,
     );
+    console.log("Hola4");
     res
       .status(201)
       .json({ message: "Turno registrado con éxito", turno: turnoDesignado });
@@ -70,7 +69,7 @@ export const designarTurno = async (req, res) => {
     await eliminarHorario(horario);
     res
       .status(500)
-      .json({ message: "Error al registrar el turno", error: error });
+      .json({ message: "Error al registrar el turno", error: error.message });
   }
 };
 
