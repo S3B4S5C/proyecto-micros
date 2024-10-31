@@ -229,9 +229,7 @@ export const eliminarParada = async (req, res) => {
 };
 
 export const getLineas = async (req, res) => {
-  const token2 = req.get("Authorization");
-  const token = token2.slice(7,-1)
-  
+  const { token } = req.body;
   const id_linea = await idLineaFromToken(token);
   const role = await roleFromToken(token);
   let lineas = "";
