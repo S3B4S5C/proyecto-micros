@@ -1,7 +1,7 @@
 import { uuid } from "uuidv4";
 import model from "../models/index.js";
 import { registrarBitacora } from "../services/bitacora.js";
-
+import { idLineaFromToken, roleFromToken } from "../services/auth.js";
 const existeSindicato = async (sindicato) => {
   const SindicatoExistente = await model.sindicato.findOne({
     where: { nombre: sindicato },
@@ -46,12 +46,10 @@ export const registrarSindicato = async (req, res) => {
       .status(201)
       .json({ message: "Sindicato registrado con éxito", sindicato: nombre });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Error al registrar el sindicato",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error al registrar el sindicato",
+      error: error.message,
+    });
   }
 };
 
@@ -130,7 +128,7 @@ export const crearParada = async (req, res) => {
     res
       .status(500)
       .json({ message: "Error al registrar la parada", error: error.message });
-    }
+  }
 };
 
 export const crearParadaProvisional = async (req, res) => {
@@ -141,7 +139,7 @@ export const crearParadaProvisional = async (req, res) => {
     latitud,
     longitud,
     id_parada_provisional,
-    token
+    token,
   } = req.body;
   const id_provisional = uuid();
   const coordenada = uuid();
@@ -160,20 +158,16 @@ export const crearParadaProvisional = async (req, res) => {
       "CREACION",
       `Parada provisional ${paradaProvisionalNueva} se ha creado con éxito`,
     );
-    res
-      .status(201)
-      .json({
-        message: "Parada provisional registrada con éxito",
-        parada: paradaProvisionalNueva,
-      });
+    res.status(201).json({
+      message: "Parada provisional registrada con éxito",
+      parada: paradaProvisionalNueva,
+    });
   } catch (error) {
     await eliminarCoordenada(coordenada);
-    res
-      .status(500)
-      .json({
-        message: "Error al registrar la parada provisional",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error al registrar la parada provisional",
+      error: error.message,
+    });
   }
 };
 
@@ -196,19 +190,15 @@ export const deshabilitarParadaProvisional = async (req, res) => {
       "ELIMINACION",
       `Parada provisonal ${paradaProvisional} se ha eliminado con éxito`,
     );
-    res
-      .status(200)
-      .json({
-        message: "Parada provisional deshabilitada con éxito",
-        paradaProvisional,
-      });
+    res.status(200).json({
+      message: "Parada provisional deshabilitada con éxito",
+      paradaProvisional,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Error al eliminar la parada provisional",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error al eliminar la parada provisional",
+      error: error.message,
+    });
   }
 };
 
@@ -239,7 +229,15 @@ export const eliminarParada = async (req, res) => {
 };
 
 export const getLineas = async (req, res) => {
-  const lineas = await model.linea.findAll();
+  const { token } = req.body;
+  const id_linea = await idLineaFromToken(token);
+  const role = await roleFromToken(token);
+  let lineas = "";
+  if (role === "Operador") {
+    lineas = await model.linea.findAll({ where: { id_linea } });
+  } else {
+    lineas = await model.linea.findAll();
+  }
   res.status(201).json(lineas);
 };
 
