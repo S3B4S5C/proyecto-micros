@@ -131,7 +131,7 @@ export const getMicrosPorLineaConEstado = async (req, res) => {
     const micros = await model.micro.findAll({
       include: [
         {
-          model: model.trabajan,
+          model: model.linea,
           where: { id_linea: linea },
           attributes: [],
         },
