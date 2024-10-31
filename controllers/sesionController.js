@@ -65,7 +65,23 @@ export const login = async (req, res) => {
       if (rol === "Operador") {
         const op = await model.operadores.findOne({ where: { usuario_operador: usuario } })
         id_linea = op.id_linea
+        registrarBitacora(
+          usuario,
+          "INICIO_SESION",
+          `El operador ${usuario} inicio sesion`,
+          id_linea
+        )
       }
+
+      if (rol === "Chofer") {
+        registrarBitacora(
+          usuario,
+          "INICIO_SESION",
+          `El chofer ${usuario} inicio sesion`,
+          id_linea
+        )
+      }
+
       const token = await generateToken(usuario, rol, id_linea);
       var farFuture = new Date(new Date().getTime() + (1000*60*60*24*365*10));
       res.cookie("token", token, {
