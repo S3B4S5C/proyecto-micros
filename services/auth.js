@@ -56,9 +56,18 @@ export const userFromToken = (token) => {
  */
 export const idLineaFromToken = (token) => {
   let idLinea;
-    jwt.verify(token, TOKEN_KEY, (err, id, role) => {
+    jwt.verify(token, TOKEN_KEY, (err, id) => {
       if (err) return console.error("token invalido");
       idLinea = id.id_linea
     });
     return idLinea
 };
+
+export const roleFromToken = (token) => {
+  let role;
+    jwt.verify(token, TOKEN_KEY, (err, id) => {
+      if (err) return console.error("token invalido");
+      role = id.role
+    });
+    return role
+}
