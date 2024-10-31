@@ -46,3 +46,64 @@ export const nuevoMantenimiento = async (req, res) => {
         .json({ message: "Error al registrar el mantenimiento", error: error.message });
     }
   };
+
+export const getMantenimientosPorLinea = async ( req, res) => {
+    const { token } = req.body;
+    try{
+        const linea = idLineaFromToken(token);
+        const mantenimientos = await model.mantenimiento.findAll({
+            include: [
+                { 
+                    model: model.micro,
+                    where: {id_linea: linea },
+                    attributes: [],
+                }
+            ]
+        })
+        if(!mantenimientos.length){
+            return res.status(404).json({ message: "No se encontraron mantenimientos para este micro"})
+        }
+        res.status(200).json(mantenimientos);
+    }catch(error){
+        res.status(500).json({
+            message: "Error al obtener los mantenimientos por micro", error: error.message,
+        })
+    }
+}
+
+export const getMantenimientosPorMicros = async ( req, res) => {
+    const { token, interno } = req.body;
+    try{
+        const linea = idLineaFromToken(token);
+        const micro = await model.micro.findOne({
+            where: { interno },
+            include: [
+              {
+                model: model.linea,
+                required: true,
+                where: { id_linea: linea },
+              },
+            ],
+          });
+          if (!micro) {
+            return res.status(404).json({ message: "Micro no encontrado para esta línea" });
+          }
+        const mantenimientos = await model.mantenimiento.findAll({
+            include: [
+                { 
+                    model: model.micro,
+                    where: {id_linea: linea, id_micro: micro.id_micro},
+                    attributes: [],
+                },
+            ]
+        })
+        if(!mantenimientos.length){
+            return res.status(404).json({ message: "No se encontraron mantenimientos para este micro"})
+        }
+        res.status(200).json(mantenimientos);
+    }catch(error){
+        res.status(500).json({
+            message: "Error al obtener los mantenimientos por micro", error: error.message,
+        })
+    }
+}
