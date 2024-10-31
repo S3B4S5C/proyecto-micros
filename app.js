@@ -10,6 +10,7 @@ import usuarioRouter from "./routes/usuarioRoutes.js";
 import rutasRouter from "./routes/routesRoutes.js";
 import turnosRouter from "./routes/turnosRoutes.js";
 import microsRouter from "./routes/microsRoutes.js";
+import  mantenimientoRouter from "./routes/mantenimientoRoutes.js";
 import { operadorValidation } from "./middlewares/roleValidation.js";
 import { authRequired } from "./middlewares/authRequired.js";
 import { validateSchema } from "./middlewares/validator.middleware.js";
@@ -44,6 +45,7 @@ app.use("/usuarios", usuarioRouter);
 app.use("/rutas", rutasRouter);
 app.use("/turnos", turnosRouter);
 app.use("/micros", microsRouter);
+app.use("/mantenimiento", mantenimientoRouter)
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
 });

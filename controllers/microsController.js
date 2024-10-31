@@ -3,6 +3,7 @@ import model from "../models/index.js";
 import { getToday, getNow } from "../utils/dates.js";
 import { uuid } from "uuidv4";
 import { userFromToken, idLineaFromToken } from "../services/auth.js";
+import mensajesModelo from "../models/mensajes.js";
 
 const existePlaca = async (placa) => {
   const placaExistente = await model.micro.findOne({
@@ -198,4 +199,4 @@ export const getMicrosPorLineaDisponibles = async (req, res) => {
   }
 };
 
-export const nuevoMantenimiento = async (req, res) => {};
+
