@@ -28,19 +28,6 @@ app.get("/", (req, res) => {
   res.send("Hi mom!");
 });
 
-/* app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:5174",
-      "https://7q577mvq-5173.brs.devtunnels.ms",
-      "https://microsfrontend.vercel.app",
-    ],
-    credentials: true,
-  })
-);
- */
-
 app.use(
   cors({
     origin: [
@@ -54,6 +41,7 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+``;
 
 app.post("/login", validateSchema(loginSchema), login);
 app.post("/register", validateSchema(registerSchema), register);

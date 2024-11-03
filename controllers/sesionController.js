@@ -19,10 +19,10 @@ const existeTelefono = async (telefono) => {
 
 const existeCarnet = async (carnet) => {
   const carnetExistente = await model.informacionesPersonales.findOne({
-    where : { carnet },
-  })
-  return  carnetExistente !==  null;
-}
+    where: { carnet },
+  });
+  return carnetExistente !== null;
+};
 
 const existeCorreo = async (correo) => {
   const UsuarioExistente = await model.informacionesPersonales.findOne({
@@ -52,46 +52,48 @@ const buscarRol = async (usuario) => {
 export const login = async (req, res) => {
   let id_linea = 1;
   let rol = "Pasajero";
-  const { usuario, contraseña } = req.body; 
+  const { usuario, contraseña } = req.body;
   try {
     const usuarioLogged = await model.usuarios.findByPk(usuario, {
       include: [
         { model: model.informacionesPersonales },
-        { model: model.choferes},
-        { model: model.operadores},
-    ]});
+        { model: model.choferes },
+        { model: model.operadores },
+      ],
+    });
     const informacion = usuarioLogged.dataValues.informaciones_personale;
     if (!usuarioLogged)
       return res.status(404).json({ message: "El usuario no existe" });
 
     if (await comparePassword(contraseña, usuarioLogged.contraseña)) {
       if (usuarioLogged.dataValues.operadore) {
-
-        id_linea = usuarioLogged.dataValues.operadore.dataValues.id_linea
+        id_linea = usuarioLogged.dataValues.operadore.dataValues.id_linea;
         registrarBitacora(
           usuario,
           "INICIO_SESION",
           `El operador ${usuario} inicio sesion`,
           id_linea
-        )
-        rol = "Operador"
-      }else if (usuarioLogged.dataValues.chofere) {
+        );
+        rol = "Operador";
+      } else if (usuarioLogged.dataValues.chofere) {
         registrarBitacora(
           usuario,
           "INICIO_SESION",
           `El chofer ${usuario} inicio sesion`,
           id_linea
-        )
-        rol = "Chofer"
+        );
+        rol = "Chofer";
       }
 
       const token = await generateToken(usuario, rol, id_linea);
-      var farFuture = new Date(new Date().getTime() + (1000*60*60*24*365*10));
+      var farFuture = new Date(
+        new Date().getTime() + 1000 * 60 * 60 * 24 * 365 * 10
+      );
       res.cookie("token", token, {
         httpOnly: true, // Protege la cookie para que no pueda ser accedida por JavaScript en el navegador
         secure: false, // Solo en HTTPS en producción
         sameSite: "none", // Evita el envío de la cookie en solicitudes entre sitios (para mayor seguridad)
-        expires: farFuture 
+        expires: farFuture,
       });
       res.status(200).json({
         message: "Inicio de sesión exitoso",
@@ -111,7 +113,9 @@ export const login = async (req, res) => {
       res.status(401).json({ message: "Contraseña incorrecta" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Error al iniciar sesion", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Credenciales invalidos", error: error.message });
   }
 };
 
@@ -246,7 +250,7 @@ export const updateContraseña = async (req, res) => {
     console.log(contraseña_actual);
     const buscarContraseña = await comparePassword(
       contraseña_actual,
-      usuarioExistente.contraseña,
+      usuarioExistente.contraseña
     );
     if (!buscarContraseña) {
       return res
@@ -280,4 +284,3 @@ export const verifyToken = async (req, res) => {
     });
   });
 };
-
