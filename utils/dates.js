@@ -7,10 +7,10 @@ export const parseDate = (date) => {
 
 export const getToday = () => {
     const now = new Date();
-    return moment(now, 'YYYY-DD-MM h:mm:ss A').format('YYYY-MM-DD');
+    return moment(now).format('YYYY-MM-DD');
 }
 
 export const getNow = () => {
     const now = new Date();
-    return moment(now, 'YYYY-DD-MM h:mm:ss A').format('HH:mm:ss');
+    return moment(now).format('HH:mm:ss');
 }

@@ -16,7 +16,7 @@ const fichaSancion = sequelize.define(
       allowNull: false,
     },
     hora: {
-        type: DataTypes.DATE,
+        type: DataTypes.TIME,
         defaultValue: DataTypes.NOW,
         allowNull: false,
     },

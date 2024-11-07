@@ -45,7 +45,7 @@ export const updateUsuario = async (req, res) => {
           direccion: idInfo.direccion,
           carnet: idInfo.carnet,
         },
-        message: "Usuario actualizado con exito xd",
+        message: "Usuario actualizado con exito",
       });
     } else {
       res.status(404).json({ message: "Usuario no encontrado" });

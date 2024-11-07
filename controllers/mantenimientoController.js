@@ -34,7 +34,7 @@ export const nuevoMantenimiento = async (req, res) => {
       await registrarBitacora(
         operador,
         "CREACION",
-        `Al micro ${interno} se le ha asginado un mantenimiento`,
+        `Al micro ${interno} se le ha asignado un mantenimiento`,
         id_linea
       )
       res.status(201).json({

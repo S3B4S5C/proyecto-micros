@@ -11,6 +11,7 @@ import rutasRouter from "./routes/routesRoutes.js";
 import turnosRouter from "./routes/turnosRoutes.js";
 import microsRouter from "./routes/microsRoutes.js";
 import mantenimientoRouter from "./routes/mantenimientoRoutes.js";
+import sancionesRouter from "./routes/sancionesRoutes.js";
 import { operadorValidation } from "./middlewares/roleValidation.js";
 import { authRequired } from "./middlewares/authRequired.js";
 import { validateSchema } from "./middlewares/validator.middleware.js";
@@ -66,6 +67,7 @@ app.use("/rutas", rutasRouter);
 app.use("/turnos", turnosRouter);
 app.use("/micros", microsRouter);
 app.use("/mantenimiento", mantenimientoRouter);
+app.use("/sanciones", sancionesRouter);
 app.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
 });
