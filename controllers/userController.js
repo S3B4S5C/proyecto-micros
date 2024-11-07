@@ -188,7 +188,6 @@ export const getChoferes = async (req, res) => {
       };
       listaDeChoferes.push(choferInfo);
     }
-    console.log("mierda");
     res.status(200).json({
       message: "Lista de choferes obtenida con éxito",
       listaDeChoferes,
@@ -346,18 +345,18 @@ export const eliminarDueño = async (res, req) => {
 };
 
 export const getDueños = async (req, res) => {
-  try{
+  try {
     const dueños = await model.dueño.findAll({
       attributes: ["id_dueño"],
-      include:[
+      include: [
         {
           model: model.informacionesPersonales,
-          attributes:["nombre","apellido"]
-        }
-      ]
+          attributes: ["nombre", "apellido"],
+        },
+      ],
     });
-    if(!dueños.length){
-      return res.status(404).json({ message: "No se encontraron dueños "})
+    if (!dueños.length) {
+      return res.status(404).json({ message: "No se encontraron dueños " });
     }
     let listaDeDueños = [];
     for (const dueño of dueños) {
@@ -369,10 +368,11 @@ export const getDueños = async (req, res) => {
       listaDeDueños.push(dueñoInfo);
     }
     res.status(200).json(listaDeDueños);
-  }catch(error){
+  } catch (error) {
     res.status(500).json({
-      message: "Error al obtener los dueños", error: error.message
-    })
+      message: "Error al obtener los dueños",
+      error: error.message,
+    });
   }
 };
 
