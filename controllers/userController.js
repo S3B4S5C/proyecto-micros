@@ -7,6 +7,21 @@ const existeUsuario = async (usuario) => {
   return UsuarioExistente !== null;
 };
 
+// ENDPOINT PARA BORRAR UN USUARIO
+export const deleteUsuario = async(req, res)=> {
+  const { carnet } = req.body;
+  try {
+    if (existeUsuario(usuario)) {
+      await model.usuarios.destroy({ where: { carnet } });
+      res.status(200).json({ message: "Usuario eliminado con exito" });
+    } else {
+      res.status(404).json({ message: "Usuario no encontrado" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Error al eliminar el usuario", error });
+}
+
+
 export const updateUsuario = async (req, res) => {
   const { usuario, nombre, apellido, correo, direccion } = req.body;
 
