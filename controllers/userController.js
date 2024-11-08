@@ -9,11 +9,11 @@ const existeUsuario = async (usuario) => {
 
 // ENDPOINT PARA BORRAR UN USUARIO
 export const deleteUsuario = async (req, res) => {
-  const { carnet } = req.body;
+  const { usuario } = req.body;
   try {
     if (existeUsuario(usuario)) {
-      await model.usuarios.destroy({ where: { carnet } });
-      res.status(200).json({ message: "Usuario eliminado con exito" });
+      await model.usuarios.destroy({ where: { usuario } });
+      res.status(200).json({ message: "Usuario elimicarnetnado con exito" });
     } else {
       res.status(404).json({ message: "Usuario no encontrado" });
     }
