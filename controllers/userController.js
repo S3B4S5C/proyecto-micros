@@ -13,12 +13,12 @@ export const deleteUsuario = async (req, res) => {
   try {
     if (existeUsuario(usuario)) {
       await model.usuarios.destroy({ where: { usuario } });
-      res.status(200).json({ message: "Usuario elimicarnetnado con exito" });
+      res.status(200).json({ message: "Usuario eliminado con exito" });
     } else {
       res.status(404).json({ message: "Usuario no encontrado" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Error al eliminar el usuario", error });
+    res.status(500).json({ message: "Error al elimina el usuario crj", error });
   }
 };
 
