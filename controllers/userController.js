@@ -8,7 +8,7 @@ const existeUsuario = async (usuario) => {
 };
 
 // ENDPOINT PARA BORRAR UN USUARIO
-export const deleteUsuario = async(req, res)=> {
+export const deleteUsuario = async (req, res) => {
   const { carnet } = req.body;
   try {
     if (existeUsuario(usuario)) {
@@ -19,8 +19,8 @@ export const deleteUsuario = async(req, res)=> {
     }
   } catch (error) {
     res.status(500).json({ message: "Error al eliminar el usuario", error });
-}
-
+  }
+};
 
 export const updateUsuario = async (req, res) => {
   const { usuario, nombre, apellido, correo, direccion } = req.body;
