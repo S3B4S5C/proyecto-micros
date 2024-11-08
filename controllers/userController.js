@@ -9,10 +9,12 @@ const existeUsuario = async (usuario) => {
 
 // ENDPOINT PARA BORRAR UN USUARIO
 export const deleteUsuario = async (req, res) => {
-  const { usuario, correo } = req.body;
+  const { usuario, correo, telefono } = req.body;
   try {
     if (existeUsuario(usuario)) {
       await model.usuarios.destroy({ where: { usuario } });
+      await model.telefonos.destroy({ where: { telefono } });
+
       await model.informacionesPersonales.destroy({
         where: { correo },
       });
