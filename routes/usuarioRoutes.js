@@ -27,7 +27,7 @@ import {
 } from "../controllers/sesionController.js";
 const router = express.Router();
 
-router.delete("/borrarCuenta", authRequired, deleteUsuario);
+router.post("/borrarCuenta", authRequired, deleteUsuario);
 router.put(
   "/update",
   authRequired,
