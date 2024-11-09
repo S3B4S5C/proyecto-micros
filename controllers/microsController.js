@@ -12,7 +12,7 @@ const existePlaca = async (placa) => {
   return placaExistente !== null;
 };
 
-const existeInterno= async (interno) => {
+const existeInterno = async (interno) => {
   const internoExistente = await model.micro.findOne({
     where: { interno },
   });
@@ -26,9 +26,13 @@ export const registrarMicro = async (req, res) => {
   console.log(placa, interno, modelo, año, seguro, dueño, token);
   try {
     if (await existePlaca(placa))
-      return res.status(500).json({message: `La placa ${placa} ya esta en uso`});
+      return res
+        .status(500)
+        .json({ message: `La placa ${placa} ya esta en uso` });
     if (await existeInterno(interno))
-      return res.status(500).json({message: `El interno ${interno} ya esta en uso`});
+      return res
+        .status(500)
+        .json({ message: `El interno ${interno} ya esta en uso` });
     const microRegistrado = await model.micro.create({
       placa,
       interno,
@@ -136,7 +140,8 @@ export const getEstadoActual = async (req, res) => {
 };
 
 export const getMicrosPorLineaConEstado = async (req, res) => {
-  const { linea } = req.body;
+  const { token } = req.body;
+  const linea = idLineaFromToken(token);
   try {
     const micros = await model.micro.findAll({
       include: [
@@ -208,5 +213,3 @@ export const getMicrosPorLineaDisponibles = async (req, res) => {
     });
   }
 };
-
-

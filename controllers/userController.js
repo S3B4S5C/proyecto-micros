@@ -14,7 +14,6 @@ export const deleteUsuario = async (req, res) => {
     if (existeUsuario(usuario)) {
       await model.usuarios.destroy({ where: { usuario } });
       await model.telefonos.destroy({ where: { telefono } });
-
       await model.informacionesPersonales.destroy({
         where: { correo },
       });
