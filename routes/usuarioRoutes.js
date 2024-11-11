@@ -12,7 +12,8 @@ import {
   getBitacora,
   getDueños,
   deleteUsuario,
-  getUsuarios
+  getUsuarios,
+  actualizarEstadoChofer
 } from "../controllers/userController.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 import { authRequired } from "../middlewares/authRequired.js";
@@ -59,6 +60,7 @@ router.post(
   operadorValidation,
   eliminarChofer
 );
+router.post("/actualizarEstado", authRequired, actualizarEstadoChofer)
 router.get("/:usuario", getUsuario);
 router.put("/actualizarPass", authRequired, updateContraseña);
 router.post("/registrarTelefono", authRequired, registrarTelefono);

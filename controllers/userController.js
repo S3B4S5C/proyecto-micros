@@ -100,7 +100,7 @@ export const updateUsuario = async (req, res) => {
 };
 
 export const crearChofer = async (req, res) => {
-  const { usuario, licencia } = req.body;
+  const { usuario, licencia, estado } = req.body;
   const id_linea = idLineaFromToken(req.body.token);
   const operador = userFromToken(req.body.token);
   const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
@@ -109,6 +109,7 @@ export const crearChofer = async (req, res) => {
       await model.choferes.create({
         usuario_chofer: usuario,
         licencia_categoria: licencia,
+        estado
       });
       registrarBitacora(
         operador,
@@ -247,6 +248,34 @@ export const getChoferes = async (req, res) => {
       .json({ message: "Error al obtener los choferes", error: error.message });
   }
 };
+
+export const actualizarEstadoChofer = async(req, res) => {
+  const { estado, token, chofer } = req.body;
+  const id_linea = idLineaFromToken(token);
+
+  const datos = {
+    ...(estado && { estado })
+  }
+  try{
+    const choferSeleccionado = await model.choferes.findOne({where: { usuario_chofer: chofer}})
+    if(!choferSeleccionado){
+      return res.status(404).json({ message: "Chofer no encontrado" });
+    }
+    await model.choferes.update(datos, { where: {usuario_operador: chofer}})
+    registrarBitacora(
+      chofer,
+      "ACTUALIZACION",
+      `El estoad del chofer ${chofer} ha sido actualizado`,
+      ip,
+      id_linea
+    );
+    res.status(201).json({ datos : { estado: estado}, message: "Estado del chofer actualizado con éxito"})
+  }catch(error){
+    res
+      .status(500)
+      .json({ message: "Error al actualizar estado del chofer", error: error.message });
+  }
+}
 
 export const getChofer = async (req, res) => {
   const { usuario } = req.params;

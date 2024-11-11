@@ -15,6 +15,10 @@ const choferesModelo = (sequelize, DataTypes)=> {
         licencia_categoria: {
             type: DataTypes.STRING(32),
             allowNull: false
+        },
+        estado: {
+          type: DataTypes.STRING,
+          allowNull: false
         }
     },
       {
