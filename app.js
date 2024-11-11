@@ -25,7 +25,7 @@ const port = 3000;
 
 app.use(express.json());
 app.use(cookieParser());
-
+app.set('trust proxy', true);
 app.get("/", (req, res) => {
   res.send("Hi mom!");
 });

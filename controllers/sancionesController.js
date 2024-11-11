@@ -14,7 +14,7 @@ export const registrarSanciones = async (req, res) => {
   const { tipo, token } = req.body;
   const operador = userFromToken(token);
   const id_linea = idLineaFromToken(token);
-  const ip = req.ip;
+  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   try {
     if (await existeSancion(tipo)) {
       return res.status(400).json({ message: "El tipo de sanción ya existe" });
