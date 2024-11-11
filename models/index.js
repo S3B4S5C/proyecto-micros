@@ -68,9 +68,11 @@ model.operadores.belongsTo(model.usuarios, { foreignKey: "usuario_operador" });
 
 model.informacionesPersonales.hasOne(model.usuarios, {
   foreignKey: "id_informacion",
+  onDelete: 'CASCADE'
 });
 model.usuarios.belongsTo(model.informacionesPersonales, {
   foreignKey: "id_informacion",
+  onDelete: 'CASCADE'
 });
 
 model.informacionesPersonales.hasMany(model.telefono, {
@@ -82,9 +84,11 @@ model.telefono.belongsTo(model.informacionesPersonales, {
 
 model.informacionesPersonales.hasOne(model.dueño, {
   foreignKey: "id_informacion",
+  onDelete: 'CASCADE'
 });
 model.dueño.belongsTo(model.informacionesPersonales, {
   foreignKey: "id_informacion",
+  onDelete: 'CASCADE'
 });
 
 model.dueño.hasMany(model.micro, {
