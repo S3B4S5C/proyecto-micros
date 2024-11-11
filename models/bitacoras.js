@@ -32,6 +32,10 @@ const bitacorasModelo = (sequelize, DataTypes) => {
         type: DataTypes.TIME,
         allowNull: false,
       },
+      ip: {
+        type: DataTypes.STRING,
+        allowNull: false
+      },
       id_linea: {
         type: DataTypes.BIGINT,
         allowNull: false,

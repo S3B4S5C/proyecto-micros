@@ -61,12 +61,12 @@ export const getMantenimientosPorLinea = async ( req, res) => {
             ]
         })
         if(!mantenimientos.length){
-            return res.status(404).json({ message: "No se encontraron mantenimientos para este micro"})
+            return res.status(404).json({ message: "No se encontraron mantenimientos para esta linea"})
         }
         res.status(200).json(mantenimientos);
     }catch(error){
         res.status(500).json({
-            message: "Error al obtener los mantenimientos por micro", error: error.message,
+            message: "Error al obtener los mantenimientos por linea", error: error.message,
         })
     }
 }

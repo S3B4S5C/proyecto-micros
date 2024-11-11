@@ -23,7 +23,7 @@ const router = express.Router();
 
 router.post("/sindicatos/crear", registrarSindicato);
 router.post("/lineas/crear", registrarLinea);
-router.post("/lineas", getLineas);
+router.post("/lineas", authRequired,getLineas);
 
 router.post("/crear", authRequired, operadorValidation, crearRuta);
 router.post("/paradas/crear", validateSchema(paradaSchema),crearParada);

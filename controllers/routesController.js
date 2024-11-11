@@ -41,7 +41,7 @@ export const registrarSindicato = async (req, res) => {
       "ADMINISTRADOR",
       "CREACION",
       `Sindicato ${nombre} se ha creado con éxito`,
-  
+      0
     );
     res
       .status(201)
@@ -73,8 +73,8 @@ export const registrarLinea = async (req, res) => {
     registrarBitacora(
       "ADMINISTRADOR",
       "CREACION",
-      `Linea ${nombre_linea} se ha creado con éxito`,
-
+      `Linea ${nombre} se ha creado con éxito`,
+      0
     );
     res
       .status(201)

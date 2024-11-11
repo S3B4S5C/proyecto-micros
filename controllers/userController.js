@@ -7,24 +7,48 @@ const existeUsuario = async (usuario) => {
   return UsuarioExistente !== null;
 };
 
-// ENDPOINT PARA BORRAR UN USUARIO
 export const deleteUsuario = async (req, res) => {
-  const { usuario, correo, telefono } = req.body;
+  const { usuario } = req.body;
   try {
-    if (existeUsuario(usuario)) {
-      await model.usuarios.destroy({ where: { usuario } });
-      await model.telefonos.destroy({ where: { telefono } });
-      await model.informacionesPersonales.destroy({
-        where: { correo },
-      });
-      res.status(200).json({ message: "Usuario eliminado con exito" });
-    } else {
-      res.status(404).json({ message: "Usuario no encontrado" });
+
+    const usuarioEncontrado = await model.usuarios.findOne({
+      where: { usuario },
+      include: [
+        {
+          model: model.informacionesPersonales,
+          include: [model.telefono] 
+        }
+      ]
+    });
+
+    if (!usuarioEncontrado) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
+
+    const informacion = usuarioEncontrado.informacionesPersonales;
+    const telefonos = informacion ? informacion.telefonos : [];
+
+    await Promise.all(
+      telefonos.map(tel => model.telefono.destroy({ where: { id_telefono: tel.id_telefono } }))
+    );
+
+    if (informacion) {
+      await model.informacionesPersonales.destroy({ where: { id_informacion: informacion.id_informacion } });
+    }
+
+    await model.usuarios.destroy({ where: { usuario } });
+    registrarBitacora(
+      usuario,
+      "ELIMINACIÓN",
+      `El usuario ${usuario} se ha eliminado con éxito`,
+      0
+    )
+    res.status(200).json({ message: "Usuario eliminado con éxito" });
   } catch (error) {
-    res.status(500).json({ message: "Error al elimina el usuario crj", error });
+    res.status(500).json({ message: "Error al eliminar el usuario", error: error.message });
   }
 };
+
 
 export const updateUsuario = async (req, res) => {
   const { usuario, nombre, apellido, correo, direccion } = req.body;
@@ -50,7 +74,8 @@ export const updateUsuario = async (req, res) => {
       registrarBitacora(
         usuario,
         "ACTUALIZACION",
-        `El usuario ${usuario} ha sido actualizado`
+        `El usuario ${usuario} ha sido actualizado`,
+        0
       );
 
       res.status(201).json({
@@ -112,7 +137,8 @@ export const crearOperador = async (req, res) => {
         registrarBitacora(
           "ADMINISTRADOR",
           "ACTUALIZACION",
-          `Al usuario ${usuario} se le ha asignado el rol de operador`
+          `Al usuario ${usuario} se le ha asignado el rol de operador`,
+          id_linea
         );
         res.status(201).json({ message: "Operador creado con exito" });
       } else {
@@ -394,6 +420,21 @@ export const getDueños = async (req, res) => {
     });
   }
 };
+
+export const getUsuarios = async(req, res) => {
+  try{
+    const usuarios = await model.usuarios.findAll({})
+    if(!usuarios.length){
+      return res.status(404).json({ message: "No se encontraron usuarios"})
+    }
+    res.status(200).json(usuarios)
+  }catch(error){
+    res.status(500).json({
+      message: "Error al obtener los usuarios",
+      error: error.message,
+    });
+  }
+}
 
 export const getBitacora = async (req, res) => {
   try {

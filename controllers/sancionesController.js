@@ -14,6 +14,7 @@ export const registrarSanciones = async (req, res) => {
   const { tipo, token } = req.body;
   const operador = userFromToken(token);
   const id_linea = idLineaFromToken(token);
+  const ip = req.ip;
   try {
     if (await existeSancion(tipo)) {
       return res.status(400).json({ message: "El tipo de sanción ya existe" });
@@ -23,6 +24,7 @@ export const registrarSanciones = async (req, res) => {
       operador,
       "CREACION",
       `Sanción tipo ${tipo} se ha creado con exito`,
+      ip,
       id_linea
     );
     res
@@ -41,6 +43,7 @@ export const registrarFichaSancion = async (req, res) => {
   const fecha = getToday();
   const hora = getNow();
   const ficha = uuid();
+  const ip = req.ip;
   try {
     const id_linea = idLineaFromToken(token);
     const operador = userFromToken(token);
@@ -63,6 +66,7 @@ export const registrarFichaSancion = async (req, res) => {
       operador,
       "CREACION",
       `Se le ha asignado una sanción al chofer ${chofer}`,
+      ip,
       id_linea
     );
     res.status(201).json({

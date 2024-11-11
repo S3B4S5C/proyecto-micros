@@ -158,15 +158,25 @@ export const getMicrosPorLineaConEstado = async (req, res) => {
           ],
           limit: 1,
         },
+        {
+          model: model.dueño,
+          required:true,
+          include: [
+            {
+              model: model.informacionesPersonales,
+              attributes: ['nombre'],
+              required: true
+            }
+          ]
+        }
       ],
     });
-
+    
     if (!micros.length) {
       return res
         .status(404)
         .json({ message: "No se encontraron micros para esta línea." });
     }
-
     res.status(200).json(micros);
   } catch (error) {
     res.status(500).json({
