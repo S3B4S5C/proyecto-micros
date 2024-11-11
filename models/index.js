@@ -74,10 +74,10 @@ model.usuarios.belongsTo(model.informacionesPersonales, {
 });
 
 model.informacionesPersonales.hasMany(model.telefono, {
-  foreignKey: "id_informacion",
+  foreignKey: "id_informacion",onDelete: 'CASCADE'
 });
 model.telefono.belongsTo(model.informacionesPersonales, {
-  foreignKey: "id_informacion",
+  foreignKey: "id_informacion", onDelete: 'CASCADE'
 });
 
 model.informacionesPersonales.hasOne(model.dueño, {
