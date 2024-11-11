@@ -209,6 +209,7 @@ export const actualizarEstadoFicha = async (req, res) => {
   const { token, estado, ficha } = req.body;
   const operador = userFromToken(token);
   const id_linea = idLineaFromToken(token);
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   const datos = {
     ...(estado && { estado }),
   };
@@ -222,6 +223,7 @@ export const actualizarEstadoFicha = async (req, res) => {
       operador,
       "ACTUALIZACION",
       `La ficha ${ficha} ha sido actualizada`,
+      ip,
       id_linea
     );
     res.status(201).json({

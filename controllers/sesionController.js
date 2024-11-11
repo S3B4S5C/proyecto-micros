@@ -53,6 +53,7 @@ export const login = async (req, res) => {
   let id_linea = 1;
   let rol = "Pasajero";
   const { usuario, contraseña } = req.body;
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   try {
     const usuarioLogged = await model.usuarios.findByPk(usuario, {
       include: [
@@ -72,6 +73,7 @@ export const login = async (req, res) => {
           usuario,
           "INICIO_SESION",
           `El operador ${usuario} inicio sesion`,
+          ip,
           id_linea
         );
         rol = "Operador";
@@ -168,6 +170,7 @@ export const register = async (req, res) => {
     carnet,
     telefonos,
   } = req.body;
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   try {
     if (await existeUsuario(usuario)) {
       return res
@@ -219,6 +222,7 @@ export const register = async (req, res) => {
       usuario,
       "CREACIÓN",
       `El usuario ${usuario} se ha registrado con exito`,
+      ip,
       0
     )
     res.status(201).json({
@@ -245,7 +249,7 @@ export const register = async (req, res) => {
 export const updateContraseña = async (req, res) => {
   const { contraseña_actual, contraseña_nueva } = req.body;
   const usuario = req.usuario.id;
-
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   if (!usuario) return res.status(400).json({ message: "Usuario invalido" });
   try {
     const usuarioExistente = await model.usuarios.findByPk(usuario);
@@ -270,8 +274,9 @@ export const updateContraseña = async (req, res) => {
     await usuarioExistente.save();
     registrarBitacora(
       usuario,
-      "ACTUALIZACIÓÑ",
+      "ACTUALIZACIÓN",
       `El usuario ${usuario} ha actualizado su contraseña con éxito`,
+      ip,
       0
     )
     res.status(200).json({ message: "Contraseña actualizada con éxito" });

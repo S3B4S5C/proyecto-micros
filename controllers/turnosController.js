@@ -24,6 +24,7 @@ export const designarTurno = async (req, res) => {
   let { date, time } = req.body;
   const horario = uuid();
   const id_turno = uuid();
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   try {
     const operador = userFromToken(token);
     const id_linea = idLineaFromToken(token);
@@ -59,6 +60,7 @@ export const designarTurno = async (req, res) => {
       operador,
       "CREACION",
       `El chofer ${chofer} ha iniciado un turno en el interno ${interno}`,
+      ip,
       id_linea,
     );
     console.log("Hola4");
@@ -77,6 +79,7 @@ export const eliminarTurno = async (res, req) => {
   const { token } = req.body;
   const { id } = req.params;
   const id_linea = idLineaFromToken(req.body.token);
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   try {
     const turno = await model.turno.findByPk(id);
     if (!turno) {
@@ -91,6 +94,7 @@ export const eliminarTurno = async (res, req) => {
       token.id,
       "ELIMINACION",
       `Turno ${turno} se ha eliminado con éxito`,
+      ip,
       id_linea
     );
     res.status(200).json({ message: "Turno eliminado con éxito" });

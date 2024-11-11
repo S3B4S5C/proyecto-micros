@@ -8,7 +8,7 @@ export const nuevoMantenimiento = async (req, res) => {
     const { descripcion, interno, token } = req.body;
     let { fecha } = req.body;
     const mantenimiento = uuid();
-    
+    const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
     try{
       const id_linea = idLineaFromToken(token);
       const operador = userFromToken(token);
@@ -35,6 +35,7 @@ export const nuevoMantenimiento = async (req, res) => {
         operador,
         "CREACION",
         `Al micro ${interno} se le ha asignado un mantenimiento`,
+        ip,
         id_linea
       )
       res.status(201).json({

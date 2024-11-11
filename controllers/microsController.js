@@ -24,6 +24,7 @@ export const registrarMicro = async (req, res) => {
   const operador = await userFromToken(token);
   const id_linea = await idLineaFromToken(token);
   console.log(placa, interno, modelo, año, seguro, dueño, token);
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   try {
     if (await existePlaca(placa))
       return res
@@ -46,6 +47,8 @@ export const registrarMicro = async (req, res) => {
       operador,
       "CREACION",
       `Micro ${microRegistrado} se ha creado correctamente`,
+      ip,
+      ip,
       id_linea
     );
     res
@@ -63,6 +66,7 @@ export const eliminarMicro = async (req, res) => {
   const { token } = req.body;
   const { id } = req.params;
   const id_linea = idLineaFromToken(req.body.token);
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   try {
     const trabajan = await model.trabajan.findByPK(id);
     if (!trabajan) {
@@ -79,6 +83,7 @@ export const eliminarMicro = async (req, res) => {
       token.id,
       "ELIMINACION",
       `Micro ${micro} se ha eliminado con éxito`,
+      ip,
       id_linea
     );
     res.status(200).json({ message: "Micro eliminado con éxito" });

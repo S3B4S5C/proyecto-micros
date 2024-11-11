@@ -9,6 +9,7 @@ export const registrarRevision = async (req, res) => {
   let { fecha } = req.body;
   const revision = uuid();
   const operador = userFromToken(token);
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   try {
     const id_linea = idLineaFromToken(token);
     if (!fecha) {
@@ -37,6 +38,7 @@ export const registrarRevision = async (req, res) => {
       operador,
       "CREACION",
       `Al micro ${interno} se le ha registrado una revisión`,
+      ip,
       id_linea
     );
     res.status(201).json({
@@ -51,10 +53,11 @@ export const registrarRevision = async (req, res) => {
   }
 };
 
-export const actualizarFechaProxima = async (req, res) => {
+export const actualizarEstado = async (req, res) => {
   const { token, estado, revision } = req.body;
   const operador = userFromToken(token);
   const id_linea = idLineaFromToken(token);
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   const datos = {
     ...(estado && { estado })
   }
@@ -68,13 +71,14 @@ export const actualizarFechaProxima = async (req, res) => {
       operador,
       "ACTUALIZACION",
       `La revisión ${revision} ha sido actualizada`,
+      ip,
       id_linea
     );
     res.status(201).json({
       datos: {
         estado: estado,
       },
-      message: "revision actualizada con exito ",
+      message: "Revision actualizada con exito ",
     });
   }catch(error){
     res

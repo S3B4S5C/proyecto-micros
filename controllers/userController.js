@@ -9,6 +9,7 @@ const existeUsuario = async (usuario) => {
 
 export const deleteUsuario = async (req, res) => {
   const { usuario } = req.body;
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   try {
 
     const usuarioEncontrado = await model.usuarios.findOne({
@@ -41,6 +42,7 @@ export const deleteUsuario = async (req, res) => {
       usuario,
       "ELIMINACIÓN",
       `El usuario ${usuario} se ha eliminado con éxito`,
+      ip,
       0
     )
     res.status(200).json({ message: "Usuario eliminado con éxito" });
@@ -52,7 +54,7 @@ export const deleteUsuario = async (req, res) => {
 
 export const updateUsuario = async (req, res) => {
   const { usuario, nombre, apellido, correo, direccion } = req.body;
-
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   const datos = {
     ...(nombre && { nombre }),
     ...(apellido && { apellido }),
@@ -75,6 +77,7 @@ export const updateUsuario = async (req, res) => {
         usuario,
         "ACTUALIZACION",
         `El usuario ${usuario} ha sido actualizado`,
+        ip,
         0
       );
 
@@ -105,6 +108,7 @@ export const crearChofer = async (req, res) => {
   const { usuario, licencia } = req.body;
   const id_linea = idLineaFromToken(req.body.token);
   const operador = userFromToken(req.body.token);
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   try {
     if (existeUsuario(usuario)) {
       await model.choferes.create({
@@ -115,6 +119,7 @@ export const crearChofer = async (req, res) => {
         operador,
         "ACTUALIZACION",
         `Al usuario ${usuario} se le ha asignado el rol de chofer`,
+        ip,
         id_linea
       );
       res.status(201).json({ message: "Chofer creado con exito" });
@@ -130,6 +135,7 @@ export const crearChofer = async (req, res) => {
 
 export const crearOperador = async (req, res) => {
   const { usuario, codigo, id_linea } = req.body;
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   if (codigo == CODIGO_OPERADOR) {
     try {
       if (existeUsuario(usuario)) {
@@ -138,6 +144,7 @@ export const crearOperador = async (req, res) => {
           "ADMINISTRADOR",
           "ACTUALIZACION",
           `Al usuario ${usuario} se le ha asignado el rol de operador`,
+          ip,
           id_linea
         );
         res.status(201).json({ message: "Operador creado con exito" });
@@ -160,6 +167,7 @@ export const crearDueño = async (res, req) => {
   const { usuario } = req.body;
   const id_linea = idLineaFromToken(req.body.token);
   const operador = userFromToken(req.body.token);
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   try {
     if (existeUsuario(usuario)) {
       const usuarioExistente = await model.usuarios.findByPk(usuario);
@@ -171,6 +179,7 @@ export const crearDueño = async (res, req) => {
         operador,
         "ACTUALIZACION",
         `El usuario ${usuario} se ha actualizado a dueño de micro`,
+        ip,
         id_linea
       );
       res.status(201).json({ message: "Dueño creado con exito" });
@@ -359,6 +368,7 @@ export const eliminarChofer = async (req, res) => {
 export const eliminarDueño = async (res, req) => {
   const { usuario, token } = req.body;
   const id_linea = idLineaFromToken(token);
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   try {
     const informacionPersonal = await model.informacionesPersonales.findOne({
       where: { usuario },
@@ -379,6 +389,7 @@ export const eliminarDueño = async (res, req) => {
       usuario,
       "ELIMINACION",
       `El usuario ${usuario} ha dejado de ser dueño`,
+      ip,
       id_linea
     );
     res.status(200).json({ message: "Dueño eliminado con éxito" });

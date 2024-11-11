@@ -30,6 +30,7 @@ const eliminarCoordenada = async (uuid) => {
 
 export const registrarSindicato = async (req, res) => {
   const { nombre } = req.body;
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   try {
     if (await existeSindicato(nombre)) {
       return res
@@ -41,6 +42,7 @@ export const registrarSindicato = async (req, res) => {
       "ADMINISTRADOR",
       "CREACION",
       `Sindicato ${nombre} se ha creado con éxito`,
+      ip,
       0
     );
     res
@@ -56,7 +58,7 @@ export const registrarSindicato = async (req, res) => {
 
 export const registrarLinea = async (req, res) => {
   const { nombre, sindicato } = req.body;
-
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   try {
     if (await existeLinea(nombre)) {
       return res
@@ -74,6 +76,7 @@ export const registrarLinea = async (req, res) => {
       "ADMINISTRADOR",
       "CREACION",
       `Linea ${nombre} se ha creado con éxito`,
+      ip,
       0
     );
     res
@@ -88,12 +91,14 @@ export const registrarLinea = async (req, res) => {
 
 export const crearRuta = async (req, res) => {
   const { id_linea } = req.body;
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   try {
     const rutaNueva = await model.ruta.create({ id_linea });
     registrarBitacora(
       "ADMINISTRADOR",
       "CREACION",
       `Ruta ${rutaNueva} se ha creado con éxito`,
+      ip,
       id_linea
     );
     res
@@ -111,6 +116,7 @@ export const crearParada = async (req, res) => {
   const id_linea = idLineaFromToken(req.body.token);
   const id_parada = uuid();
   const coordenada = uuid();
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   try {
     await crearCoordenada(coordenada, latitud, longitud);
     const paradaNueva = await model.parada.create({
@@ -124,6 +130,7 @@ export const crearParada = async (req, res) => {
       token.id,
       "CREACION",
       `Parada ${nombre_parada} se ha creado con éxito`,
+      ip,
       id_linea
     );
     res
@@ -150,6 +157,7 @@ export const crearParadaProvisional = async (req, res) => {
   const id_provisional = uuid();
   const coordenada = uuid();
   const id_linea = idLineaFromToken(req.body.token);
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   try {
     await crearCoordenada(coordenada, latitud, longitud);
     const paradaProvisionalNueva = await model.paradaProvisional.create({
@@ -164,6 +172,7 @@ export const crearParadaProvisional = async (req, res) => {
       token.id,
       "CREACION",
       `Parada provisional ${paradaProvisionalNueva} se ha creado con éxito`,
+      ip,
       id_linea
     );
     res.status(201).json({
@@ -185,6 +194,7 @@ export const deshabilitarParadaProvisional = async (req, res) => {
   const id_linea = idLineaFromToken(req.body.token);
   const fecha_fin = Date.now();
   console.log(fecha_fin);
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   try {
     const paradaProvisional = await model.paradaProvisional.findByPk(id);
     if (!paradaProvisional) {
@@ -198,6 +208,7 @@ export const deshabilitarParadaProvisional = async (req, res) => {
       token.id,
       "ELIMINACION",
       `Parada provisonal ${paradaProvisional} se ha eliminado con éxito`,
+      ip,
       id_linea
     );
     res.status(200).json({
@@ -216,6 +227,7 @@ export const eliminarParada = async (req, res) => {
   const { token } = req.body;
   const { id } = req.params;
   const id_linea = idLineaFromToken(req.body.token);
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   try {
     const parada = await model.parada.findByPk(id);
     if (!parada) {
@@ -230,6 +242,7 @@ export const eliminarParada = async (req, res) => {
       token.id,
       "ELIMINACION",
       `Parada ${parada} se ha eliminado con éxito`,
+      ip,
       id_linea
     );
     res.status(200).json({ message: "Parada eliminada con éxito" });
