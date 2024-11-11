@@ -235,6 +235,7 @@ export const getChoferes = async (req, res) => {
         carnet: chofer.usuario.informaciones_personale.carnet,
         sexo: chofer.usuario.informaciones_personale.sexo,
         telefonos: chofer.usuario.informaciones_personale.telefonos,
+        estado: chofer.estado
       };
       listaDeChoferes.push(choferInfo);
     }
@@ -252,7 +253,7 @@ export const getChoferes = async (req, res) => {
 export const actualizarEstadoChofer = async(req, res) => {
   const { estado, token, chofer } = req.body;
   const id_linea = idLineaFromToken(token);
-
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
   const datos = {
     ...(estado && { estado })
   }
@@ -261,7 +262,7 @@ export const actualizarEstadoChofer = async(req, res) => {
     if(!choferSeleccionado){
       return res.status(404).json({ message: "Chofer no encontrado" });
     }
-    await model.choferes.update(datos, { where: {usuario_operador: chofer}})
+    await model.choferes.update(datos, { where: {usuario_chofer: chofer}})
     registrarBitacora(
       chofer,
       "ACTUALIZACION",
@@ -495,3 +496,21 @@ export const getBitacora = async (req, res) => {
       .json({ message: "Error al obtener la bitacora", error: error.message });
   }
 };
+
+
+export const getChoferesDisponibles = async(req,res) => {
+  try{
+    const choferes = await model.choferes.findAll({
+      where: { estado: 'Disponible'}
+    })
+    if(!choferes.length){
+      return res.status(404).json({ message: "No se encontraron choferes disponibles"})
+    }
+    res.status(200).json(choferes);
+  }catch(error){
+    res.status(500).json({
+      message: "Error al obtener los choferes disponibles",
+      error: error.message,
+    });
+  }
+}

@@ -3,7 +3,7 @@ import {
   registrarMicro,
   eliminarMicro,
   setEstado,
-  getMicrosPorLineaConEstado,
+  getMicrosPorLineaConEstado
 } from "../controllers/microsController.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 import { authRequired } from "../middlewares/authRequired.js";
@@ -18,4 +18,5 @@ router.post("/eliminar/:id", authRequired, operadorValidation, eliminarMicro);
 
 router.post("/agregarEstado", authRequired, operadorValidation, setEstado);
 router.post("/", authRequired, operadorValidation, getMicrosPorLineaConEstado);
+
 export default router;

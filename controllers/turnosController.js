@@ -254,12 +254,13 @@ const getHorasTrabajadas = async(chofer,date) => {
       ],
       where: { 
         hora_llegada: { [Sequelize.Op.ne]: null},
+        fecha_horario: date
       }
     },
     {
       model: model.choferes,
       required: true,
-      where: { usuarios_chofer: chofer}
+      where: { usuario_chofer: chofer}
     }
   ]
   });
@@ -271,6 +272,133 @@ const getHorasTrabajadas = async(chofer,date) => {
   return totalHoras;
 }
 
-export const frecuenciaMicro = async(req, res) => {
+const getChoferDisponible = async(id_linea) => {
 
+  const date = getToday();
+  const choferes = await model.choferes.findAll({
+    where: { estado: 'Disponible'},
+    include: [
+      {
+        model: model.turno,
+        required: true,
+        include: [
+          {
+            model: model.micro,
+            required: true,
+            include: [
+              {
+                model: model.linea,
+                required: true,
+                where: { id_linea:id_linea },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  });
+  const choferesDisponibles = [];
+  for (let chofer of choferes){
+    const horasTrabajadas = await getHorasTrabajadas(chofer.usuario_chofer, date);
+    const horasRestantes = MAX_CARGA_HORARIA - horasTrabajadas;
+    if (horasRestantes > 0){
+      choferesDisponibles.push(chofer);
+    }
+  }
+  return choferesDisponibles;
 }
+
+const getUltimoTurno = async (chofer) => {
+  try {
+    const turnoAnterior = await model.turno.findOne({
+      where: { usuario_chofer: chofer},
+      order: [['id_turno', 'DESC']],  
+      limit: 1
+  });
+
+    if (!turnoAnterior) {
+      return null; 
+    }
+
+    return turnoAnterior;
+  } catch (error) {
+    console.error("Error al obtener el último turno:", error);
+    throw error; 
+  }
+};
+
+
+export const frecuenciaMicro = async(req, res) => {
+  const { frecuencia, partida, token } = req.body;
+  const date = getToday();
+  const id_linea = idLineaFromToken(token);
+  const frecuenciaMs = frecuencia * 60 * 1000;
+  try {
+    const choferesDisponibles = await getChoferDisponible(id_linea);
+    if (!choferesDisponibles.length) {
+      return res.status(404).json({ message: "No hay choferes disponibles" });
+    }
+    let indexChofer = 0;
+
+    const intervalo = setInterval(async () => {
+      const chofer = choferesDisponibles[indexChofer];
+      if (!chofer) {
+        clearInterval(intervalo);
+        return res.status(200).json({ message: "Todos los turnos fueron asignados" });
+      }
+
+      const cargaHorariaChofer = await getHorasTrabajadas(chofer.dataValues.usuario_chofer, date);
+      if (cargaHorariaChofer >= MAX_CARGA_HORARIA) {
+        indexChofer++;
+        return;
+      }
+
+      const horario = uuid();
+      const id_turno = uuid();
+      const operador = userFromToken(token);
+
+      const turnoAnterior = await getUltimoTurno(chofer.usuario_chofer);
+
+      if (!turnoAnterior) {
+        indexChofer++;
+        return res.status(404).json({ message: `El chofer ${chofer.usuario_chofer} no tiene un turno anterior registrado` });
+      }
+
+      const id_micro = turnoAnterior.id_micro; 
+      await model.horario.create({
+        id_horario: horario,
+        hora_salida: getNow(),
+        punto_de_salida: partida,
+        fecha_horario: getToday(),
+        usuario_operador: operador,
+      });
+
+      const nuevoTurno = await model.turno.create({
+        id_turno,
+        usuario_chofer: chofer.usuario_chofer,
+        id_horario: horario,
+        id_micro,
+      });
+
+      registrarBitacora(
+        operador,
+        "CREACION",
+        `El chofer ${chofer.usuario_chofer} ha iniciado un turno en el micro ${id_micro}`,
+        req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress,
+        id_linea
+      );
+
+      indexChofer++;
+      if (indexChofer >= choferesDisponibles.length) {
+        clearInterval(intervalo);
+        return res.status(200).json({ message: "Turnos asignados correctamente", ultimoTurno: nuevoTurno });
+      }
+    }, frecuenciaMs);
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al asignar la frecuencia de turnos",
+      error: error.message,
+    });
+  }
+};

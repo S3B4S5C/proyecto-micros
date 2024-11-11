@@ -62,13 +62,17 @@ export const login = async (req, res) => {
         { model: model.operadores },
       ],
     });
-    const informacion = usuarioLogged.dataValues.informaciones_personale;
     if (!usuarioLogged)
       return res.status(404).json({ message: "El usuario no existe" });
+    const informacion = usuarioLogged.dataValues.informaciones_personale;
+    
 
     if (await comparePassword(contraseña, usuarioLogged.contraseña)) {
       if (usuarioLogged.dataValues.operadore) {
         id_linea = usuarioLogged.dataValues.operadore.dataValues.id_linea;
+        if (!id_linea) {
+          return res.status(400).json({ message: "El operador no tiene una línea asignada" });
+        }
         registrarBitacora(
           usuario,
           "INICIO_SESION",
@@ -78,10 +82,15 @@ export const login = async (req, res) => {
         );
         rol = "Operador";
       } else if (usuarioLogged.dataValues.chofere) {
+        id_linea = usuarioLogged.dataValues.chofere.dataValues.id_linea; 
+        if (!id_linea) {
+          id_linea = 0;
+        }
         registrarBitacora(
           usuario,
           "INICIO_SESION",
           `El chofer ${usuario} inicio sesion`,
+          ip,
           id_linea
         );
         rol = "Chofer";
