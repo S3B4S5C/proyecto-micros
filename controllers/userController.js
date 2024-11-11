@@ -28,6 +28,8 @@ export const deleteUsuario = async (req, res) => {
 
     const informacion = usuarioEncontrado.informacionesPersonales;
     const telefonos = informacion ? informacion.telefonos : [];
+    console.log(informacion);  
+    console.log(telefonos);
 
     await Promise.all(
       telefonos.map(tel => model.telefono.destroy({ where: { id_telefono: tel.id_telefono } }))
@@ -36,15 +38,8 @@ export const deleteUsuario = async (req, res) => {
     if (informacion) {
       await model.informacionesPersonales.destroy({ where: { id_informacion: informacion.id_informacion } });
     }
-
+    
     await model.usuarios.destroy({ where: { usuario } });
-    registrarBitacora(
-      usuario,
-      "ELIMINACIÓN",
-      `El usuario ${usuario} se ha eliminado con éxito`,
-      ip,
-      0
-    )
     res.status(200).json({ message: "Usuario eliminado con éxito" });
   } catch (error) {
     res.status(500).json({ message: "Error al eliminar el usuario", error: error.message });

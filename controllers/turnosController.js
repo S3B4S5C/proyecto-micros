@@ -2,8 +2,18 @@ import { uuid } from "uuidv4";
 import { getNow, getToday } from "../utils/dates.js";
 import { userFromToken, idLineaFromToken } from "../services/auth.js";
 import model from "../models/index.js";
+import Sequelize from 'sequelize';
 import { registrarBitacora } from "../services/bitacora.js";
+import usuariosModelo from "../models/usuarios.js";
 const iniciarHorario = async (uuid, partida, date, time, operador) => {};
+
+const MAX_CARGA_HORARIA = 7 + (20/60);
+
+const convertDecimalToHM = (decimal) => {
+  const hours = Math.floor(decimal);
+  const minutes = Math.round((decimal - hours) * 60);
+  return `${hours}:${minutes.toString().padStart(2, '0')}`;
+};
 
 const eliminarHorario = async (uuid) => {
   await model.horario.destroy({ where: { id_horario: uuid } });
@@ -152,3 +162,115 @@ export const getTurnosActivos = async (req, res) => {
     };
   res.status(200).json(turnosActivos);
 };
+
+
+export const getCargaHorariaChofer = async(req, res)=> {
+  const { token, chofer} = req.body;
+  const linea = idLineaFromToken(token);
+  let { fecha } = req.body;
+  try{
+    if(!fecha){
+      fecha= getToday();
+    }
+    const turnos = await model.turno.findAll({
+      
+      include: [
+        {
+          model: model.horario,
+          as: "horario",
+          attributes: ['hora_llegada', 'hora_salida',
+            [
+              Sequelize.literal(`
+                CASE
+
+                  WHEN hora_llegada >= hora_salida
+                  THEN EXTRACT(EPOCH FROM (('2023-01-01' || ' ' || hora_llegada)::timestamp - ('2023-01-01' || ' ' || hora_salida)::timestamp)) / 3600
+
+                  ELSE EXTRACT(EPOCH FROM (('2023-01-02' || ' ' || hora_llegada)::timestamp - ('2023-01-01' || ' ' || hora_salida)::timestamp)) / 3600
+                END
+              `),
+              'horas_turno'
+            ]
+          ],
+          where:{
+            hora_llegada: {[Sequelize.Op.ne]: null},
+          },
+          include: [
+            {
+              model: model.operadores,
+              required: true,
+              include: [
+                {
+                  model: model.linea,
+                  required: true,
+                  where: { id_linea:linea}
+                }
+              ]
+            }
+          ]
+        },
+        {
+          model: model.choferes,
+          required:true,
+          where:{ usuario_chofer: chofer}
+        }
+      ]
+    })
+    if(!turnos.length){
+      return res.status(404).json({ message: "No se encontrarons turnos para este chofer"})
+    }
+    
+    const totalHoras = turnos.reduce((sum, turno) => {
+      const horasTurno = turno.horario ? parseFloat(turno.horario.getDataValue('horas_turno')) : 0;
+      return sum + horasTurno;
+    }, 0);
+    const totalHorasFormateadas = convertDecimalToHM(totalHoras);
+    res.status(200).json({turnos, totalHoras: totalHorasFormateadas})
+  }catch(error){
+    res.status(500).json({
+      message: "Error al obtener los turnos del chofer",
+      error: error.message,
+    });
+  }
+}
+
+const getHorasTrabajadas = async(chofer,date) => {
+  const turnos = await model.turno.findAll({
+    include: [
+    {
+      model: model.horario,
+      as: "horario",
+      attributes: ['hora_llegada', 'hora_salida', 
+        [
+          Sequelize.literal(`
+            CASE
+              WHEN hora_llegada >= hora_salida
+              THEN EXTRACT(EPOCH FROM (('2023-01-01' || ' ' || hora_llegada)::timestamp - ('2023-01-01' || ' ' || hora_salida)::timestamp)) / 3600
+              ELSE EXTRACT(EPOCH FROM (('2023-01-02' || ' ' || hora_llegada)::timestamp - ('2023-01-01' || ' ' || hora_salida)::timestamp)) / 3600
+            END
+          `),
+          'horas_turno'
+        ]
+      ],
+      where: { 
+        hora_llegada: { [Sequelize.Op.ne]: null},
+      }
+    },
+    {
+      model: model.choferes,
+      required: true,
+      where: { usuarios_chofer: chofer}
+    }
+  ]
+  });
+  const totalHoras = turnos.reduce((sum, turno) => {
+    const horasTurno = turno.horario ? parseFloat(turno.horario.getDataValue('horas_turno')) : 0;
+    return sum + horasTurno;
+  }, 0);
+
+  return totalHoras;
+}
+
+export const frecuenciaMicro = async(req, res) => {
+
+}
