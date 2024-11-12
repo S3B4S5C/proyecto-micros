@@ -117,7 +117,9 @@ export const eliminarTurno = async (res, req) => {
 };
 
 export const getTurnosActivos = async (req, res) => {
-  const linea = req.body.id_linea;
+  // const linea = req.body.id_linea;
+  const { token } = req.body;
+  const linea = idLineaFromToken(token);
   const turnos = await model.turno.findAll({
     include: [
       {
