@@ -29,7 +29,7 @@ export const finalizarTurno = async (req, res) => {
 
 export const designarTurno = async (req, res) => {
   const { interno, chofer, partida, token } = req.body;
-  let { date, time } = req.body;
+  let { date, time } = req.body || getToday();
   const horario = uuid();
   const id_turno = uuid();
   const ip =
