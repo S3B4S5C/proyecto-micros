@@ -14,7 +14,9 @@ export const registrarSanciones = async (req, res) => {
   const { tipo, token } = req.body;
   const operador = userFromToken(token);
   const id_linea = idLineaFromToken(token);
-  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
+  const ip =
+    req.headers["x-forwarded-for"]?.split(",")[0] ||
+    req.connection.remoteAddress;
   try {
     if (await existeSancion(tipo)) {
       return res.status(400).json({ message: "El tipo de sanción ya existe" });
@@ -43,7 +45,9 @@ export const registrarFichaSancion = async (req, res) => {
   const fecha = getToday();
   const hora = getNow();
   const ficha = uuid();
-  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
+  const ip =
+    req.headers["x-forwarded-for"]?.split(",")[0] ||
+    req.connection.remoteAddress;
   try {
     const id_linea = idLineaFromToken(token);
     const operador = userFromToken(token);
@@ -74,12 +78,10 @@ export const registrarFichaSancion = async (req, res) => {
       Ficha: fichaRegistrada,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Error al registrar la ficha de sanción",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error al registrar la ficha de sanción",
+      error: error.message,
+    });
   }
 };
 
@@ -209,7 +211,9 @@ export const actualizarEstadoFicha = async (req, res) => {
   const { token, estado, ficha } = req.body;
   const operador = userFromToken(token);
   const id_linea = idLineaFromToken(token);
-  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
+  const ip =
+    req.headers["x-forwarded-for"]?.split(",")[0] ||
+    req.connection.remoteAddress;
   const datos = {
     ...(estado && { estado }),
   };
@@ -238,26 +242,3 @@ export const actualizarEstadoFicha = async (req, res) => {
       .json({ message: "Error al actualizar ficha", error: error.message });
   }
 };
-
-/*
-export const eliminarSancion = async (req, res) => 
-{
-    const {token, id_sancion} = req.body;
-    const operador = userFromToken(token);
-    const id_linea = idLineaFromToken(token);
-    try{
-
-        await model.sancion.destroy({where: { id_sancion}});
-        registrarBitacora(
-            operador,
-            "ELIMINACION",
-            `Sanción ${sancion} ha sido destruida`,
-            id_linea
-        )
-        res.status(200).json({ message: "Sanción eliminada con éxito" });
-    }catch(error){
-        res
-      .status(500)
-      .json({ message: "Error al eliminar la sanción", error: error.message });
-    }
-}*/
