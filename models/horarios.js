@@ -17,15 +17,7 @@ const horario = sequelize.define(
       type: DataTypes.TIME,
       allowNull: true
     },
-    punto_de_salida: {
-        type: DataTypes.STRING(64),
-        allowNull: false
-    },
-    fecha_horario: {
-        type: DataTypes.DATEONLY,
-        defaultValue: DataTypes.NOW,
-        allowNull: true
-    },
+    
     usuario_operador: {
         type: DataTypes.STRING(255),
         allowNull:false,

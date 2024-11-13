@@ -46,8 +46,6 @@ export const designarTurno = async (req, res) => {
     await model.horario.create({
       id_horario: horario,
       hora_salida: time,
-      punto_de_salida: partida,
-      fecha_horario: date,
       usuario_operador: operador,
     });
     const micro = await model.micro.findOne({
@@ -63,6 +61,8 @@ export const designarTurno = async (req, res) => {
     const turnoDesignado = await model.turno.create({
       id_turno,
       usuario_chofer: chofer,
+      punto_de_salida: partida,
+      fecha: date,
       id_horario: horario,
       id_micro: micro.dataValues.id_micro,
     });
@@ -117,7 +117,7 @@ export const eliminarTurno = async (res, req) => {
 };
 
 export const getTurnosActivos = async (req, res) => {
-  // const linea = req.body.id_linea;
+
   const { token } = req.body;
   const linea = idLineaFromToken(token);
   const turnos = await model.turno.findAll({
@@ -156,10 +156,10 @@ export const getTurnosActivos = async (req, res) => {
       interno: turno.micro.interno,
       placa: turno.micro.placa,
       id_horario: turno.horario.id_horario,
-      fecha_horario: turno.horario.fecha_horario,
+      fecha: turno.fecha,
       hora_salida: turno.horario.hora_salida,
       hora_llegada: turno.horario.hora_llegada,
-      punto_de_salida: turno.horario.punto_de_salida,
+      punto_de_salida: turno.punto_de_salida,
     };
     turnosActivos.push(turnoInfo);
   }
@@ -387,14 +387,14 @@ export const frecuenciaMicro = async (req, res) => {
       await model.horario.create({
         id_horario: horario,
         hora_salida: getNow(),
-        punto_de_salida: partida,
-        fecha_horario: getToday(),
         usuario_operador: operador,
       });
 
       const nuevoTurno = await model.turno.create({
         id_turno,
         usuario_chofer: chofer.usuario_chofer,
+        punto_de_salida: partida,
+        fecha: getToday(),
         id_horario: horario,
         id_micro,
       });

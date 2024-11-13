@@ -497,7 +497,6 @@ export const getBitacora = async (req, res) => {
   }
 };
 
-
 export const getChoferesDisponibles = async(req,res) => {
   try{
     const choferes = await model.choferes.findAll({

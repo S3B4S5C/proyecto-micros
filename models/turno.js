@@ -15,6 +15,15 @@ const turnoModelo = (sequelize, DataTypes) => {
           key: "usuario_chofer",
         },
       },
+      punto_de_salida: {
+        type: DataTypes.STRING(64),
+        allowNull: false
+    },
+    fecha: {
+        type: DataTypes.DATEONLY,
+        defaultValue: DataTypes.NOW,
+        allowNull: true
+    },
       id_horario: {
         type: DataTypes.UUID,
         allowNull: false,
