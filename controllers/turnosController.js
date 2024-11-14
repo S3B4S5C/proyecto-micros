@@ -352,7 +352,7 @@ export const getCargaHorariaChofer = async (req, res) => {
 
 const getHorasTrabajadas = async (chofer, date) => {
   const turnos = await model.turno.findAll({
-    where: { fecha: date, hora_llegada_aproximada: { [Sequelize.Op.ne]: null },},
+    where: { fecha: date, hora_llegada: { [Sequelize.Op.ne]: null },},
     include: [
       {
         model: model.horario,
