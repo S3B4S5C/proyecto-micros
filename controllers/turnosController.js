@@ -259,7 +259,7 @@ export const getTurnosActivos = async (req, res) => {
       id_horario: turno.horario.id_horario,
       fecha: turno.fecha,
       hora_salida: turno.horario.hora_salida,
-      hora_llegada: turno.horario.hora_llegada,
+      hora_llegada: turno.horario.hora_llegada_aproximada,
       punto_de_salida: turno.punto_de_salida,
     };
     turnosActivos.push(turnoInfo);
