@@ -2,7 +2,7 @@ const horariosModelo = (sequelize, DataTypes) => {
 const horario = sequelize.define(
   'horarios',
   {
-    // Model attributes are defined here
+
     id_horario: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
@@ -13,7 +13,7 @@ const horario = sequelize.define(
       type: DataTypes.TIME,
       allowNull: false,
     },
-    hora_llegada: {
+    hora_llegada_aproximada: {
       type: DataTypes.TIME,
       allowNull: true
     },

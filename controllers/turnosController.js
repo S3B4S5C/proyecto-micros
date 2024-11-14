@@ -7,6 +7,106 @@ import { registrarBitacora } from "../services/bitacora.js";
 
 const MAX_CARGA_HORARIA = 7 + 20 / 60;
 
+const existeHora = async (hora_llegada, hora_salida, operador ) => {
+  const horaExistente = await model.horario.findOne({
+    where: {hora_salida, hora_llegada_aproximada: hora_llegada,usuario_operador: operador}
+  });
+  return horaExistente !== null;
+}
+
+export const crearHorario = async(req, res) => {
+  const {token, hora_salida, hora_llegada} = req.body;
+  const operador = userFromToken(token)
+  const horario = uuid();
+  const id_linea = idLineaFromToken(token);
+  const ip =
+    req.headers["x-forwarded-for"]?.split(",")[0] ||
+    req.connection.remoteAddress;
+  try{
+    const horariosExistentes = await model.horario.findAll({
+      where: {
+        usuario_operador: operador,
+        hora_llegada_aproximada: { [Sequelize.Op.ne]: null },
+      },
+    });
+    const horarioDuplicado = horariosExistentes.some(
+      (horario) =>
+        horario.hora_salida === hora_salida &&
+        horario.hora_llegada_aproximada === hora_llegada
+    );
+
+    if (horarioDuplicado) {
+      return res.status(400).json({ message: "La hora ya existe" });
+    }
+    await model.horario.create({ 
+      id_horario: horario,
+      hora_salida,
+      hora_llegada_aproximada: hora_llegada,
+      usuario_operador: operador
+    })
+    registrarBitacora(
+      operador,
+      "CREACIÓN",
+      `Horario ${hora_salida} - ${hora_llegada} se ha creado`,
+      ip,
+      id_linea
+    )
+    res.status(201).json({ message : "Horario registado con éxito", id_horario: horario, salida:hora_salida, llegada: hora_salida})
+  }catch(error){
+    res.status(500).json({
+      message: "Error al registrar el horario",
+      error: error.message,
+    });
+  }
+}
+
+export const eliminarHora = async (req, res) => {
+  const { token, id_horario} = req.body;
+  const id_linea = idLineaFromToken(token);
+  const operador = userFromToken(token);
+  const ip = req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
+  try{
+    const horario = await model.horario.findByPk(id_horario)
+    if(!horario){
+      return res.status(404).json({message: "Horario no encontrado"});
+    }
+    await horario.destroy();
+    registrarBitacora(
+      operador,
+      "ELIMINACIÓN",
+      `Horario ${horario.hora_salida} - ${ horario.hora_llegada} se ha eliminado`,
+      ip,
+      id_linea
+    )
+
+    res.status(200).json({ message: "Horario eliminado con éxito" });
+  }catch(error){
+    res
+      .status(500)
+      .json({ message: "Error al eliminar el horario", error: error.message });
+  }
+}
+
+export const getHorarios = async(req, res) => {
+  const { token } = req.body;
+  const operador = userFromToken(token);
+  try{
+    const horarios = await model.horario.findAll({
+      where: { usuario_operador : operador,
+        hora_llegada_aproximada: { [Sequelize.Op.ne]: null },
+      }
+    })
+    if(!horarios){
+      return res.status(404).json({message: "No existen horarios para esta linea"});
+    }
+    return res.status(200).json(horarios);
+  }catch(error){
+    res
+      .status(500)
+      .json({ message: "Error los horarios", error: error.message });
+  }
+}
+
 const convertDecimalToHM = (decimal) => {
   const hours = Math.floor(decimal);
   const minutes = Math.round((decimal - hours) * 60);
@@ -20,17 +120,16 @@ const eliminarHorario = async (uuid) => {
 export const finalizarTurno = async (req, res) => {
   const { uuid } = req.body;
   const time = getNow();
-  await model.horario.update(
+  await model.turno.update(
     { hora_llegada: time },
-    { where: { id_horario: uuid } }
+    { where: { id_turno: uuid } }
   );
   res.status(200).json({ message: "Turno finalizado" });
 };
 
 export const designarTurno = async (req, res) => {
-  const { interno, chofer, partida, token } = req.body;
+  const { interno, chofer, partida, token,horario } = req.body;
   let { date, time } = req.body || getToday();
-  const horario = uuid();
   const id_turno = uuid();
   const ip =
     req.headers["x-forwarded-for"]?.split(",")[0] ||
@@ -43,11 +142,6 @@ export const designarTurno = async (req, res) => {
       date = getToday();
       time = getNow();
     }
-    await model.horario.create({
-      id_horario: horario,
-      hora_salida: time,
-      usuario_operador: operador,
-    });
     const micro = await model.micro.findOne({
       where: { interno },
       include: [
@@ -66,6 +160,14 @@ export const designarTurno = async (req, res) => {
       id_horario: horario,
       id_micro: micro.dataValues.id_micro,
     });
+    await model.choferes.update(
+      { estado: "en ruta" },
+      { where: { usuario_chofer: chofer } }
+    );
+    await model.micro.update(
+      { estado: "en ruta" },
+      { where: { interno } }
+    );
     registrarBitacora(
       operador,
       "CREACION",
@@ -96,11 +198,9 @@ export const eliminarTurno = async (res, req) => {
     if (!turno) {
       return res.status(400).json({ message: "Turno no encontrado" });
     }
-    const horario = await model.horario.findByPK(turno.id_horario);
+
     await turno.destroy();
-    if (horario) {
-      await horario.destroy();
-    }
+
     registrarBitacora(
       token.id,
       "ELIMINACION",
@@ -121,12 +221,13 @@ export const getTurnosActivos = async (req, res) => {
   const { token } = req.body;
   const linea = idLineaFromToken(token);
   const turnos = await model.turno.findAll({
+    where: {
+      hora_llegada: null,
+    },
     include: [
       {
         model: model.horario,
-        where: {
-          hora_llegada: null,
-        },
+        
         required: true,
         include: [
           {
@@ -175,29 +276,28 @@ export const getCargaHorariaChofer = async (req, res) => {
       fecha = getToday();
     }
     const turnos = await model.turno.findAll({
+      
       include: [
         {
           model: model.horario,
           as: "horario",
           attributes: [
-            "hora_llegada",
+            "hora_llegada_aproximada",
             "hora_salida",
             [
               Sequelize.literal(`
                 CASE
 
-                  WHEN hora_llegada >= hora_salida
-                  THEN EXTRACT(EPOCH FROM (('2023-01-01' || ' ' || hora_llegada)::timestamp - ('2023-01-01' || ' ' || hora_salida)::timestamp)) / 3600
+                  WHEN turno.hora_llegada >= horario.hora_salida
+                  THEN EXTRACT(EPOCH FROM (('2023-01-01' || ' ' || turno.hora_llegada)::timestamp - ('2023-01-01' || ' ' || horario.hora_salida)::timestamp)) / 3600
 
-                  ELSE EXTRACT(EPOCH FROM (('2023-01-02' || ' ' || hora_llegada)::timestamp - ('2023-01-01' || ' ' || hora_salida)::timestamp)) / 3600
+                  ELSE EXTRACT(EPOCH FROM (('2023-01-02' || ' ' || turno.hora_llegada)::timestamp - ('2023-01-01' || ' ' || horario.hora_salida)::timestamp)) / 3600
                 END
               `),
               "horas_turno",
             ],
           ],
-          where: {
-            hora_llegada: { [Sequelize.Op.ne]: null },
-          },
+          
           include: [
             {
               model: model.operadores,
@@ -217,7 +317,16 @@ export const getCargaHorariaChofer = async (req, res) => {
           required: true,
           where: { usuario_chofer: chofer },
         },
+        {
+          model: model.micro,
+          required:true,
+          as: "micro",
+          attributes: [
+            "interno","micro"
+          ]
+        }
       ],
+      where: { fecha, hora_llegada_aproximada: { [Sequelize.Op.ne]: null }, },
     });
     if (!turnos.length) {
       return res
@@ -243,28 +352,25 @@ export const getCargaHorariaChofer = async (req, res) => {
 
 const getHorasTrabajadas = async (chofer, date) => {
   const turnos = await model.turno.findAll({
+    where: { fecha: date, hora_llegada_aproximada: { [Sequelize.Op.ne]: null },},
     include: [
       {
         model: model.horario,
         as: "horario",
         attributes: [
-          "hora_llegada",
+          "hora_llegada_aproximada",
           "hora_salida",
           [
             Sequelize.literal(`
             CASE
               WHEN hora_llegada >= hora_salida
-              THEN EXTRACT(EPOCH FROM (('2023-01-01' || ' ' || hora_llegada)::timestamp - ('2023-01-01' || ' ' || hora_salida)::timestamp)) / 3600
-              ELSE EXTRACT(EPOCH FROM (('2023-01-02' || ' ' || hora_llegada)::timestamp - ('2023-01-01' || ' ' || hora_salida)::timestamp)) / 3600
+              THEN EXTRACT(EPOCH FROM (('2023-01-01' || ' ' || turno.hora_llegada)::timestamp - ('2023-01-01' || ' ' || horario.hora_salida)::timestamp)) / 3600
+              ELSE EXTRACT(EPOCH FROM (('2023-01-02' || ' ' || turno.hora_llegada)::timestamp - ('2023-01-01' || ' ' || horario.hora_salida)::timestamp)) / 3600
             END
           `),
             "horas_turno",
           ],
         ],
-        where: {
-          hora_llegada: { [Sequelize.Op.ne]: null },
-          fecha_horario: date,
-        },
       },
       {
         model: model.choferes,
@@ -398,7 +504,11 @@ export const frecuenciaMicro = async (req, res) => {
         id_horario: horario,
         id_micro,
       });
-
+      await model.choferes.update(
+        { estado: "en ruta" },
+        { where: { usuario_chofer: chofer.usuario_chofer } }
+      );
+      await registrarEstado({estado: "en ruta", id_micro})
       registrarBitacora(
         operador,
         "CREACION",
@@ -423,4 +533,18 @@ export const frecuenciaMicro = async (req, res) => {
       error: error.message,
     });
   }
+};
+
+const registrarEstado = async ({ estado, id_micro }) => {
+  const fecha = getToday();
+  const hora = getNow();
+  const id_estado = uuid();
+
+  return await model.estado.create({
+    id_estado,
+    estado,
+    fecha,
+    hora,
+    id_micro,
+  });
 };

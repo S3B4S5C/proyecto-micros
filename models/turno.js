@@ -24,6 +24,10 @@ const turnoModelo = (sequelize, DataTypes) => {
         defaultValue: DataTypes.NOW,
         allowNull: true
     },
+    hora_llegada: {
+      type: DataTypes.TIME,
+      allowNull:true
+    },
       id_horario: {
         type: DataTypes.UUID,
         allowNull: false,

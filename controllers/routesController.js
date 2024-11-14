@@ -241,7 +241,7 @@ export const eliminarParada = async (req, res) => {
     await registrarBitacora(
       token.id,
       "ELIMINACION",
-      `Parada ${parada} se ha eliminado con éxito`,
+      `Parada ${parada} se ha eliminado`,
       ip,
       id_linea
     );

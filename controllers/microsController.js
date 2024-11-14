@@ -121,7 +121,7 @@ export const getEstadoActual = async (req, res) => {
   const { id_micro } = req.params;
 
   try {
-    const estadoActual = await model.estados.findOne({
+    const estadoActual = await model.estado.findOne({
       where: { id_micro },
       order: [
         ["fecha", "DESC"],

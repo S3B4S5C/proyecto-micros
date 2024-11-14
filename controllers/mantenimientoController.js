@@ -57,7 +57,7 @@ export const getMantenimientosPorLinea = async ( req, res) => {
                 { 
                     model: model.micro,
                     where: {id_linea: linea },
-                    attributes: [],
+                    attributes: ["interno", "placa"],
                 }
             ]
         })

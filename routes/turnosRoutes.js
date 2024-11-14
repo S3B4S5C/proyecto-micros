@@ -8,6 +8,9 @@ import {
   getTurnosActivos,
   getCargaHorariaChofer,
   frecuenciaMicro,
+  crearHorario,
+  eliminarHora, 
+  getHorarios
 } from "../controllers/turnosController.js";
 import { authRequired } from "../middlewares/authRequired.js";
 import { operadorValidation } from "../middlewares/roleValidation.js";
@@ -23,4 +26,7 @@ router.post(
   getCargaHorariaChofer
 );
 router.post("/frecuencia", authRequired, operadorValidation, frecuenciaMicro);
+router.post("/crearHorario", authRequired, operadorValidation, crearHorario)
+router.post("/eliminarHorario", authRequired, operadorValidation, eliminarHora)
+router.post("/horarios", authRequired, operadorValidation, getHorarios )
 export default router;
