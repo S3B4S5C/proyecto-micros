@@ -322,11 +322,11 @@ export const getCargaHorariaChofer = async (req, res) => {
           required:true,
           as: "micro",
           attributes: [
-            "interno","micro"
+            "interno","placa"
           ]
         }
       ],
-      where: { fecha, hora_llegada_aproximada: { [Sequelize.Op.ne]: null }, },
+      where: { fecha, hora_llegada: { [Sequelize.Op.ne]: null }, },
     });
     if (!turnos.length) {
       return res
