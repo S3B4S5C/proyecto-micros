@@ -13,10 +13,15 @@ import microsRouter from "./routes/microsRoutes.js";
 import mantenimientoRouter from "./routes/mantenimientoRoutes.js";
 import revisionRouter from "./routes/revisionRoutes.js";
 import sancionesRouter from "./routes/sancionesRoutes.js";
+import mensajesRouter from "./routes/mensajesRoutes.js";
 import { operadorValidation } from "./middlewares/roleValidation.js";
 import { authRequired } from "./middlewares/authRequired.js";
 import { validateSchema } from "./middlewares/validator.middleware.js";
 import { loginSchema, registerSchema } from "./schemas/user.schema.js";
+
+
+import http from "http";
+import { Server } from "socket.io";
 import cors from "cors";
 
 const app = express();
@@ -58,6 +63,43 @@ app.use("/micros", microsRouter);
 app.use("/mantenimiento", mantenimientoRouter);
 app.use("/sanciones", sancionesRouter);
 app.use("/revisionesTecnicas", revisionRouter);
-app.listen(port, () => {
+app.use("/chat", mensajesRouter);
+
+//Sockets
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "https://7q577mvq-5173.brs.devtunnels.ms",
+      "https://microsfrontend.vercel.app",
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  },
+  transports: ["websocket"],
+});
+
+io.on("connection", (socket) => {
+  console.log(`Usuario conectado: ${socket.id}`);
+
+  socket.on("join-line", (lineaId) => {
+      socket.join(`linea-${lineaId}`);
+      console.log(`Usuario unido a la línea ${lineaId}`);
+  });
+
+  socket.on("enviar-mensaje", (data) => {
+      const { receptor, contenido, id_linea } = data;
+      io.to(`linea-${id_linea}`).emit("nuevo-mensaje", data);
+  });
+
+  socket.on("disconnect", () => {
+      console.log("Usuario desconectado");
+  });
+});
+
+server.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
 });
