@@ -23,16 +23,6 @@ const choferesModelo = (sequelize, DataTypes)=> {
             model: 'lineas',
             key: 'id_linea'
           }
-        },
-        fecha: {
-            type: DataTypes.DATEONLY,
-            defaultValue: DataTypes.NOW,
-            allowNull: false
-        },
-        hora: {
-            type: DataTypes.TIME,
-            defaultValue: DataTypes.NOW,
-            allowNull: false
         }
     },
       {
