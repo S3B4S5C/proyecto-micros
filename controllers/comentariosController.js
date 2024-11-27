@@ -21,6 +21,14 @@ export const crearComentario = async (req, res) => {
   return res.status(200).json(comentario);
 };
 
+export const eliminarComentario = async (req, res) => {
+  const { id_comentarios } = req.body;
+  const comentario = await model.comentarios.destroy({
+    where: { id_comentarios },
+  });
+  return res.status(200).json(comentario);
+};
+
 export const getComentarios = async (req, res) => {
   const { id_linea } = req.body;
   const comentarios = await model.comentario.findAll({
