@@ -103,7 +103,7 @@ export const getHorarios = async(req, res) => {
   }catch(error){
     res
       .status(500)
-      .json({ message: "Error los horarios", error: error.message });
+      .json({ message: "Error al obtener los horarios", error: error.message });
   }
 }
 
@@ -138,9 +138,11 @@ export const designarTurno = async (req, res) => {
     const operador = userFromToken(token);
     const id_linea = idLineaFromToken(token);
 
-    if (!date || !time) {
+    if (!date) {
       date = getToday();
-      time = getNow();
+    }
+    if ( !time) {
+      time = getNow()
     }
     const micro = await model.micro.findOne({
       where: { interno },

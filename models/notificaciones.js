@@ -25,7 +25,16 @@ const notificacion = sequelize.define(
             model: 'operadores',
             key: 'usuario_operador'
         }
-    }
+    },
+    fecha: {
+      type: DataTypes.DATEONLY,
+      defaultValue: DataTypes.NOW,
+      allowNull: false
+  },
+  hora: {
+    type: DataTypes.TIME,
+    allowNull:false
+  },
   },
   {
     tableName: 'notificaciones',
