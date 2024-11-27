@@ -18,7 +18,7 @@ import { operadorValidation } from "./middlewares/roleValidation.js";
 import { authRequired } from "./middlewares/authRequired.js";
 import { validateSchema } from "./middlewares/validator.middleware.js";
 import { loginSchema, registerSchema } from "./schemas/user.schema.js";
-
+import { newMensaje } from "./controllers/mensajesController.js";
 
 import http from "http";
 import { Server } from "socket.io";
@@ -42,6 +42,7 @@ app.use(
       "http://localhost:5174",
       "https://7q577mvq-5173.brs.devtunnels.ms",
       "https://microsfrontend.vercel.app",
+      "https://transportescz.vercel.app"
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -74,6 +75,7 @@ const io = new Server(server, {
       "http://localhost:5174",
       "https://7q577mvq-5173.brs.devtunnels.ms",
       "https://microsfrontend.vercel.app",
+      "https://transportescz.vercel.app"
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -91,8 +93,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("enviar-mensaje", (data) => {
-      const { receptor, contenido, id_linea } = data;
+      const { emisor, contenido, id_linea } = data;
+      newMensaje(id_linea, contenido, emisor);
       io.to(`linea-${id_linea}`).emit("nuevo-mensaje", data);
+      console.log(`Mensaje enviado: ${contenido}`);
   });
 
   socket.on("disconnect", () => {
@@ -103,3 +107,4 @@ io.on("connection", (socket) => {
 server.listen(port, () => {
   console.log(`Servidor escuchando en http://localhost:${port}`);
 });
+ 
