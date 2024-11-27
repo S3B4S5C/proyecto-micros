@@ -4,7 +4,7 @@ const incidente = sequelize.define(
   {
     // Model attributes are defined here
     id_incidente: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.UUID,
       autoIncrement: true,
       primaryKey: true,
       allowNull: false
@@ -32,6 +32,14 @@ const incidente = sequelize.define(
         model: "turno",
         key: "id_turno",
       },
+    },
+    id_linea: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      references: {
+        model: 'lineas',
+        key: 'id_linea'
+      }
     }
   },
   {
@@ -39,13 +47,7 @@ const incidente = sequelize.define(
     timestamps: false
   },
 );
-incidente.associate = function(models) {
-  incidente.belongsTo(models.Turno, {
-      foreignKey: ['usuario_chofer', 'id_micro'],
-      targetKeyKey: ['usuario_chofer', 'id_micro'],
-      as: 'turno',
-  })
-};
+
   return incidente
 };
 

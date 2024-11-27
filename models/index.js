@@ -154,8 +154,7 @@ model.turno.belongsTo(model.horario, {
   onUpdate: "CASCADE",
 });
 
-model.operadores.hasMany(model.incidente, { foreignKey: "usuario_operador" });
-model.incidente.belongsTo(model.operadores, { foreignKey: "usuario_operador" });
+
 
 model.operadores.hasMany(model.horario, { foreignKey: "usuario_operador" });
 model.horario.belongsTo(model.operadores, { foreignKey: "usuario_operador" });
@@ -233,6 +232,8 @@ model.paradaProvisional.belongsTo(model.paradaProvisional, {
   as: "paradaProvisionalPadre",
 });
 
+model.choferes.belongsTo(model.linea, { foreignKey: "id_linea" });
+model.linea.hasMany(model.choferes, { foreignKey: "id_linea" });
 
 model.usuarios.hasMany(model.bitacora, { foreignKey: "usuario_bitacora" });
 model.bitacora.belongsTo(model.usuarios, { foreignKey: "usuario_bitacora" });
