@@ -14,22 +14,24 @@ const mensaje = sequelize.define(
         type: DataTypes.STRING(255),
         allowNull: false,
     },
-    usuario_emisor: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-        references: {
-            model: 'usuarios',
-            key: 'usuario'
-        }
+    id_linea: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      references: {
+        model: 'lineas',
+        key: 'id_linea'
+      }
     },
-    usuario_receptor: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-        references: {
-            model: 'usuarios',
-            key: 'usuario'
-        }
+    fecha: {
+        type: DataTypes.DATEONLY,
+        defaultValue: DataTypes.NOW,
+        allowNull: false
     },
+    hora: {
+        type: DataTypes.TIME,
+        defaultValue: DataTypes.NOW,
+        allowNull: false
+    }
   },
   {
     tableName: 'mensajes',
