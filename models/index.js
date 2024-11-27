@@ -233,23 +233,6 @@ model.paradaProvisional.belongsTo(model.paradaProvisional, {
   as: "paradaProvisionalPadre",
 });
 
-model.usuarios.hasMany(model.mensaje, {
-  foreignKey: "usuario_emisor",
-  as: "mensajesEnviados",
-});
-model.mensaje.belongsTo(model.usuarios, {
-  foreignKey: "usuario_emisor",
-  as: "emisor",
-});
-
-model.usuarios.hasMany(model.mensaje, {
-  foreignKey: "usuario_receptor",
-  as: "mensajesRecibidos",
-});
-model.mensaje.belongsTo(model.usuarios, {
-  foreignKey: "usuario_receptor",
-  as: "receptor",
-});
 
 model.usuarios.hasMany(model.bitacora, { foreignKey: "usuario_bitacora" });
 model.bitacora.belongsTo(model.usuarios, { foreignKey: "usuario_bitacora" });
