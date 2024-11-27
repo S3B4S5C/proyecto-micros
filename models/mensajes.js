@@ -14,6 +14,14 @@ const mensaje = sequelize.define(
         type: DataTypes.STRING(255),
         allowNull: false,
     },
+    emisor: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+        references: {
+            model: 'usuarios',
+            key: 'usuario'
+        }
+    },
     id_linea: {
       type: DataTypes.BIGINT,
       allowNull: false,
