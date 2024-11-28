@@ -16,6 +16,7 @@ import sancionesRouter from "./routes/sancionesRoutes.js";
 import mensajesRouter from "./routes/mensajesRoutes.js";
 import incidentesRouter from "./routes/incidentesRoutes.js";
 import notificacionesRouter from "./routes/notificacionesRoutes.js"
+import comentariosRouter from "./routes/comentariosRoutes.js"
 import { operadorValidation } from "./middlewares/roleValidation.js";
 import { authRequired } from "./middlewares/authRequired.js";
 import { validateSchema } from "./middlewares/validator.middleware.js";
@@ -68,8 +69,8 @@ app.use("/sanciones", sancionesRouter);
 app.use("/revisionesTecnicas", revisionRouter);
 app.use("/chat", mensajesRouter);
 app.use("/incidentes", incidentesRouter);
-app.use("/notificacion", notificacionesRouter);
-
+app.use("/notificaciones", notificacionesRouter);
+app.use("/comentarios", comentariosRouter)
 //Sockets
 const server = http.createServer(app);
 const io = new Server(server, {
