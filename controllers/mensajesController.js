@@ -42,7 +42,7 @@ export const getMensajes = async (req, res) => {
   }
 }  
 
-export const newMensaje = async (id_linea, contenido, emisor) => {
+export const newMensaje = async (id_linea, contenido, emisor, rol) => {
   const id_mensaje = uuid();
   const fecha = getToday();
   const hora = getNow();
