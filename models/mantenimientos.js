@@ -1,38 +1,42 @@
 const mantenimientosModelo = (sequelize, DataTypes) => {
-const mantenimiento = sequelize.define(
-  'mantenimientos',
-  {
-    // Model attributes are defined here
-    id_mantenimiento: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      autoIncrement: true,
-      primaryKey: true,
-      allowNull: false
-    },
-    fecha: {
+  const mantenimiento = sequelize.define(
+    "mantenimientos",
+    {
+      // Model attributes are defined here
+      id_mantenimiento: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        autoIncrement: true,
+        primaryKey: true,
+        allowNull: false,
+      },
+      fecha: {
         type: DataTypes.DATEONLY,
         defaultValue: DataTypes.NOW,
         allowNull: false,
-    },
-    descripcion: {
+      },
+      descripcion: {
         type: DataTypes.STRING(255),
-        allowNull: false
-    },
-    id_micro: {
+        allowNull: false,
+      },
+      id_micro: {
         type: DataTypes.BIGINT,
         allowNull: false,
         references: {
-            model: 'micros',
-            key: 'id_micro'
-        }
+          model: "micros",
+          key: "id_micro",
+        },
+      },
+      tipo_mantenimiento: {
+        type: DataTypes.STRING(64),
+        allowNull: false,
+      },
     },
-  },
-  {
-    tableName: 'mantenimientos',
-    timestamps: false
-  },
-);
-  return mantenimiento
-}
-export default mantenimientosModelo
+    {
+      tableName: "mantenimientos",
+      timestamps: false,
+    }
+  );
+  return mantenimiento;
+};
+export default mantenimientosModelo;
