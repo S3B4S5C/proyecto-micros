@@ -29,7 +29,7 @@ const mantenimientosModelo = (sequelize, DataTypes) => {
       },
       tipo_mantenimiento: {
         type: DataTypes.STRING(64),
-        allowNull: false,
+        allowNull: true,
       },
     },
     {
