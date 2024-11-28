@@ -53,7 +53,8 @@ export const newMensaje = async (id_linea, contenido, emisor) => {
         id_linea,
         fecha,
         hora,
-        emisor
+        emisor,
+        rol
     })
   } catch (error) {
     console.log(error);

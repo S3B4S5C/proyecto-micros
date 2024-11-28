@@ -98,8 +98,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("enviar-mensaje", (data) => {
-      const { emisor, contenido, id_linea } = data;
-      newMensaje(id_linea, contenido, emisor);
+      const { emisor, contenido, id_linea, rol } = data;
+      newMensaje(id_linea, contenido, emisor, rol);
       io.to(`linea-${id_linea}`).emit("nuevo-mensaje", data);
       console.log(`Mensaje enviado: ${contenido}`);
   });

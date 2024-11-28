@@ -39,6 +39,9 @@ const mensaje = sequelize.define(
         type: DataTypes.TIME,
         defaultValue: DataTypes.NOW,
         allowNull: false
+    },
+    rol: {
+      type: DataTypes.STRING,
     }
   },
   {
