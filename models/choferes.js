@@ -23,6 +23,10 @@ const choferesModelo = (sequelize, DataTypes)=> {
             model: 'lineas',
             key: 'id_linea'
           }
+        },
+        estado: {
+          type: DataTypes.STRING,
+          allowNull: false
         }
     },
       {

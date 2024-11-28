@@ -109,7 +109,8 @@ export const crearChofer = async (req, res) => {
       await model.choferes.create({
         usuario_chofer: usuario,
         licencia_categoria: licencia,
-        estado
+        estado,
+        id_linea,
       });
       registrarBitacora(
         operador,
