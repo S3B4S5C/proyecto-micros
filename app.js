@@ -67,8 +67,8 @@ app.use("/sanciones", sancionesRouter);
 app.use("/revisionesTecnicas", revisionRouter);
 app.use("/chat", mensajesRouter);
 app.use("/incidentes", incidentesRouter);
-app.use("/notificacion", notificacionesRouter);
-
+app.use("/notificaciones", notificacionesRouter);
+app.use("/comentarios", comentariosRouter);
 //Sockets
 const server = http.createServer(app);
 const io = new Server(server, {

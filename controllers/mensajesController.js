@@ -30,8 +30,8 @@ export const getMensajes = async (req, res) => {
     const mensajes = await model.mensaje.findAll({
       where: { id_linea },
       order: [
-        ["fecha", "DESC"],
-        ["hora", "DESC"],
+        ["fecha", "ASC"],
+        ["hora", "ASC"],
       ],
     });
     res.status(200).json(mensajes);
