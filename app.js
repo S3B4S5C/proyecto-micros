@@ -96,10 +96,17 @@ io.on("connection", (socket) => {
   });
 
   socket.on("enviar-mensaje", (data) => {
+<<<<<<< HEAD
     const { emisor, contenido, id_linea } = data;
     newMensaje(id_linea, contenido, emisor);
     io.to(`linea-${id_linea}`).emit("nuevo-mensaje", data);
     console.log(`Mensaje enviado: ${contenido}`);
+=======
+      const { emisor, contenido, id_linea, rol } = data;
+      newMensaje(id_linea, contenido, emisor, rol);
+      io.to(`linea-${id_linea}`).emit("nuevo-mensaje", data);
+      console.log(`Mensaje enviado: ${contenido}`);
+>>>>>>> 2d7f9bbcd91e2f6a9bc3e5f2b4e743d7903435d1
   });
 
   socket.on("disconnect", () => {
